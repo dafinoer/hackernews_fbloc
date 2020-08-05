@@ -47,7 +47,6 @@ class TopBloc extends Bloc<TopEvent, TopState> {
     final listId = await _repository.idsTopStories();
 
     if (listId.isNotEmpty) {
-      // final limitId = listId.getRange(0, ).toList();
       cacheIds.addAll(listId);
 
       final listTemp =
@@ -65,24 +64,13 @@ class TopBloc extends Bloc<TopEvent, TopState> {
     final nextLimit = currentState.listStory.length;
 
     if (cacheIds.length > nextLimit) {
-      // final listTemp = cacheIds
-      //     .getRange(currentState.listStory.length - 1, nextLimit)
-      //     .map((e) {
-      //       _repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
-      //       return _repository.getFromServerTopStories();
-      //     });
-
-      // var listData = await Future.wait(listTemp);
-
       var itemCacheId = recursiveStory(0, currentState, []);
-
-      print(itemCacheId.length);
 
       final listTemp = itemCacheId.map((e) {
         _repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
         return _repository.getFromServerTopStories();
       });
-
+      
       var listNewLoadedStory = await Future.wait(listTemp);
 
       yield TopLoaded(
