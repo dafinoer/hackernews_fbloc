@@ -8,9 +8,9 @@ import 'package:hackernews_flutter/utils/endpoints.dart';
 
 class IdsServices {
 
-  Future<List<int>> idsTopStories() async {
+  Future<List<int>> fetchIds(String urlEndpoint) async {
     try {
-      final Response resultFromJson = await BaseApi.getData(url: Endpoint.top_stories_ids);
+      final Response resultFromJson = await BaseApi.getData(url: urlEndpoint);
       return List.from(resultFromJson.data);
     } catch (e) {
       throw Exception(e);

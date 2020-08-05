@@ -35,6 +35,7 @@ class Story extends Item with EquatableMixin {
       time: jsonData[Strings.param_time] ?? 0,
       title: jsonData[Strings.param_title] ?? '',
       type: jsonData[Strings.param_type] ?? '',
+      url: jsonData[Strings.param_url] ?? ''
     );
   }
 }

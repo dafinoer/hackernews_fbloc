@@ -45,12 +45,13 @@ class TopBloc extends Bloc<TopEvent, TopState> {
   bool get isMax => state is TopLoaded;
 
   Stream<TopState> loadingState(TopIdEvent event) async* {
-    final listId = await _repository.idsTopStories();
+    final listId = await _repository.fetchIds(Endpoint.top_stories_ids);
 
     if (listId.isNotEmpty) {
       cacheIds.addAll(listId);
 
-      final listTemp = listOfStory(cacheIds);
+      final listTemp = listOfStory(cacheIds, start: event.indexStart, limit: event.limit);
+      print(listTemp);
 
       var listData = await Future.wait(listTemp);
       yield TopLoaded(isMax: false, listStory: listData);
@@ -64,7 +65,7 @@ class TopBloc extends Bloc<TopEvent, TopState> {
       final itemCacheId = recursiveStory(0, currentState, []);
 
       final listTemp = listOfStory(itemCacheId);
-      
+
       final listNewLoadedStory = await Future.wait(listTemp);
 
       yield TopLoaded(
@@ -85,8 +86,30 @@ class TopBloc extends Bloc<TopEvent, TopState> {
     }
   }
 
-  List<Future<Story>> listOfStory(List<int> paramsId) => paramsId.map((e){
-     _repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
-     return _repository.getFromServerTopStories();
-  });
+  List<Future<Story>> listOfStory(List<int> paramsId, {int start, int limit}) {
+    var temps = [];
+
+    try {
+      
+      if (start != null && limit != null) {
+        
+        temps = paramsId.getRange(start, limit).map((e) {
+          _repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
+          return _repository.fetchStories();
+        }).toList();
+
+      } else {
+        
+        temps = paramsId.map((e) {
+          _repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
+          return _repository.fetchStories();
+        }).toList();
+
+      }
+
+      return temps;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 }

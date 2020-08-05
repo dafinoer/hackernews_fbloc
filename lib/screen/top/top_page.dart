@@ -5,6 +5,7 @@ import 'package:hackernews_flutter/bloc/top/top_event.dart';
 import 'package:hackernews_flutter/bloc/top/top_state.dart';
 import 'package:hackernews_flutter/utils/function_helper.dart';
 import 'package:hackernews_flutter/utils/strings.dart';
+import 'package:hackernews_flutter/utils/values.dart';
 
 class TopPage extends StatefulWidget {
   @override
@@ -24,12 +25,14 @@ class _TopPage extends State<TopPage> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void dispose() {
+    context.bloc<TopBloc>().close();
+    super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
         appBar: AppBar(
           title: Text(Strings.top),
@@ -49,18 +52,41 @@ class _TopPage extends State<TopPage> {
 
             if (state is TopLoaded) {
               return ListView.builder(
-                controller: _scrollController,
+                  controller: _scrollController,
                   itemCount: state.isMax
                       ? state.listStory.length
                       : state.listStory.length + 1,
                   itemBuilder: (_, index) {
                     if (index >= state.listStory.length) {
-                      return Center(child: CircularProgressIndicator(),);
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
                     }
-
-                    return ListTile(
-                      title: Text(state.listStory[index].title),
-                      onTap: () {},
+                    return Padding(
+                      padding: EdgeInsets.symmetric(vertical: space_2x),
+                      child: ExpansionTile(
+                        title: Text(
+                          state.listStory[index].title,
+                          style: theme.textTheme.subtitle1,
+                        ),
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: space_4x, vertical: space_2x),
+                            child: Align(
+                                alignment: Alignment.topLeft,
+                                child: GestureDetector(
+                                  child: Text(
+                                    state.listStory[index].url,
+                                    style: TextStyle(color: linkUrlColor),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  onTap: () {},
+                                )),
+                          )
+                        ],
+                      ),
                     );
                   });
             }
@@ -78,7 +104,7 @@ class _TopPage extends State<TopPage> {
 
   void _firstEvent() {
     final providers = BlocProvider.of<TopBloc>(context);
-    if(providers.state is TopLoading){
+    if (providers.state is TopLoading) {
       context.bloc<TopBloc>().add(TopIdEvent(indexStart: 0, limit: 20));
     }
   }
