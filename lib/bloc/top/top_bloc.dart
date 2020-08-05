@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc/bloc.dart';
 import 'package:hackernews_flutter/bloc/top/top_event.dart';
 import 'package:hackernews_flutter/bloc/top/top_state.dart';
+import 'package:hackernews_flutter/model/story.dart';
 import 'package:hackernews_flutter/repository/topstories_repository.dart';
 import 'package:hackernews_flutter/utils/endpoints.dart';
 import 'package:rxdart/rxdart.dart';
@@ -49,11 +50,7 @@ class TopBloc extends Bloc<TopEvent, TopState> {
     if (listId.isNotEmpty) {
       cacheIds.addAll(listId);
 
-      final listTemp =
-          cacheIds.getRange(event.indexStart, event.limit).map((e) {
-        _repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
-        return _repository.getFromServerTopStories();
-      });
+      final listTemp = listOfStory(cacheIds);
 
       var listData = await Future.wait(listTemp);
       yield TopLoaded(isMax: false, listStory: listData);
@@ -64,14 +61,11 @@ class TopBloc extends Bloc<TopEvent, TopState> {
     final nextLimit = currentState.listStory.length;
 
     if (cacheIds.length > nextLimit) {
-      var itemCacheId = recursiveStory(0, currentState, []);
+      final itemCacheId = recursiveStory(0, currentState, []);
 
-      final listTemp = itemCacheId.map((e) {
-        _repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
-        return _repository.getFromServerTopStories();
-      });
+      final listTemp = listOfStory(itemCacheId);
       
-      var listNewLoadedStory = await Future.wait(listTemp);
+      final listNewLoadedStory = await Future.wait(listTemp);
 
       yield TopLoaded(
           listStory: currentState.listStory + listNewLoadedStory, isMax: false);
@@ -90,4 +84,9 @@ class TopBloc extends Bloc<TopEvent, TopState> {
       return paramsStoryId;
     }
   }
+
+  List<Future<Story>> listOfStory(List<int> paramsId) => paramsId.map((e){
+     _repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
+     return _repository.getFromServerTopStories();
+  });
 }
