@@ -23,7 +23,7 @@ class HackerNewsFlutter extends StatelessWidget {
       theme: ThemeData(
         primaryColor: primaryColor
       ),
-      routes: RouteHackerNews.routing(),
+      routes: RouteHackerNews.routing(context),
       home: MultiBlocProvider(
         providers: [
           BlocProvider(create: (_) => NavigatorBloc(0)),

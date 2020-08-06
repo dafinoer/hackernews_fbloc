@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hackernews_flutter/bloc/top/top_bloc.dart';
 import 'package:hackernews_flutter/bloc/top/top_event.dart';
 import 'package:hackernews_flutter/bloc/top/top_state.dart';
+import 'package:hackernews_flutter/screen/detail/detail_page.dart';
+import 'package:hackernews_flutter/utils/detail_arguments.dart';
 import 'package:hackernews_flutter/utils/function_helper.dart';
 import 'package:hackernews_flutter/utils/strings.dart';
 import 'package:hackernews_flutter/utils/values.dart';
@@ -29,6 +31,7 @@ class _TopPage extends State<TopPage> {
     context.bloc<TopBloc>().close();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -62,32 +65,49 @@ class _TopPage extends State<TopPage> {
                         child: CircularProgressIndicator(),
                       );
                     }
-                    return Padding(
-                      padding: EdgeInsets.symmetric(vertical: space_2x),
-                      child: ExpansionTile(
-                        title: Text(
-                          state.listStory[index].title,
-                          style: theme.textTheme.subtitle1,
-                        ),
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: space_4x, vertical: space_2x),
-                            child: Align(
-                                alignment: Alignment.topLeft,
-                                child: GestureDetector(
-                                  child: Text(
-                                    state.listStory[index].url,
-                                    style: TextStyle(color: linkUrlColor),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  onTap: () {},
-                                )),
-                          )
-                        ],
+
+                    return ListTile(
+                      title: Text(
+                        state.listStory[index].title,
+                        style: theme.textTheme.subtitle1,
                       ),
+                      onTap: () {
+                        Navigator.pushNamed(context, DetailPage.routeName,
+                            arguments:
+                                DetailArguments(story: state.listStory[index]));
+                      },
                     );
+                    // return Padding(
+                    //   padding: EdgeInsets.symmetric(vertical: space_2x),
+                    //   child: ExpansionTile(
+                    //     title: Text(
+                    //       state.listStory[index].title,
+                    //       style: theme.textTheme.subtitle1,
+                    //     ),
+                    //     children: <Widget>[
+                    //       Padding(
+                    //         padding: const EdgeInsets.symmetric(
+                    //             horizontal: space_4x, vertical: space_2x),
+                    //         child: Align(
+                    //             alignment: Alignment.topLeft,
+                    //             child: GestureDetector(
+                    //               child: Text(
+                    //                 state.listStory[index].url,
+                    //                 style: TextStyle(color: linkUrlColor),
+                    //                 maxLines: 2,
+                    //                 overflow: TextOverflow.ellipsis,
+                    //               ),
+                    //               onTap: () {
+                    //                 Navigator.pushNamed(
+                    //                     context, DetailPage.routeName,
+                    //                     arguments: DetailArguments(
+                    //                         story: state.listStory[index]));
+                    //               },
+                    //             )),
+                    //       )
+                    //     ],
+                    //   ),
+                    // );
                   });
             }
           },

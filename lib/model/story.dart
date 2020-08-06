@@ -11,11 +11,14 @@ class Story extends Item with EquatableMixin {
 
   final int score;
 
+  final List<int> kids;
+
   Story({
     int id,
     int time,
     String type,
     String by,
+    this.kids,
     this.descendants,
     this.title,
     this.url,
@@ -35,7 +38,8 @@ class Story extends Item with EquatableMixin {
       time: jsonData[Strings.param_time] ?? 0,
       title: jsonData[Strings.param_title] ?? '',
       type: jsonData[Strings.param_type] ?? '',
-      url: jsonData[Strings.param_url] ?? ''
+      url: jsonData[Strings.param_url] ?? '',
+      kids: List.from(jsonData[Strings.param_kids] ?? [])
     );
   }
 }
