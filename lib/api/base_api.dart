@@ -3,11 +3,16 @@ import 'package:dio/dio.dart';
 class BaseApi {
   static Future<dynamic> getData(
       {String url, 
-      Map<String, dynamic> queryParams
+      Map<String, dynamic> queryParams,
+      Options options
       }) async {
         
     try {
-      final result = await Dio().get(url, queryParameters: queryParams);
+      final result = await Dio().get(
+        url, 
+        queryParameters: queryParams,
+        options: options
+        );
 
       if (result.statusCode != 200) {
         throw DioError(

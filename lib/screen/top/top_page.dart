@@ -5,6 +5,7 @@ import 'package:hackernews_flutter/bloc/top/top_event.dart';
 import 'package:hackernews_flutter/bloc/top/top_state.dart';
 import 'package:hackernews_flutter/screen/detail/detail_page.dart';
 import 'package:hackernews_flutter/utils/detail_arguments.dart';
+import 'package:hackernews_flutter/utils/format_helper.dart';
 import 'package:hackernews_flutter/utils/function_helper.dart';
 import 'package:hackernews_flutter/utils/strings.dart';
 import 'package:hackernews_flutter/utils/values.dart';
@@ -71,47 +72,23 @@ class _TopPage extends State<TopPage> {
                         state.listStory[index].title,
                         style: theme.textTheme.subtitle1,
                       ),
+                      subtitle: Text(_dateUpload(state.listStory[index].time)),
                       onTap: () {
                         Navigator.pushNamed(context, DetailPage.routeName,
                             arguments:
                                 DetailArguments(story: state.listStory[index]));
                       },
                     );
-                    // return Padding(
-                    //   padding: EdgeInsets.symmetric(vertical: space_2x),
-                    //   child: ExpansionTile(
-                    //     title: Text(
-                    //       state.listStory[index].title,
-                    //       style: theme.textTheme.subtitle1,
-                    //     ),
-                    //     children: <Widget>[
-                    //       Padding(
-                    //         padding: const EdgeInsets.symmetric(
-                    //             horizontal: space_4x, vertical: space_2x),
-                    //         child: Align(
-                    //             alignment: Alignment.topLeft,
-                    //             child: GestureDetector(
-                    //               child: Text(
-                    //                 state.listStory[index].url,
-                    //                 style: TextStyle(color: linkUrlColor),
-                    //                 maxLines: 2,
-                    //                 overflow: TextOverflow.ellipsis,
-                    //               ),
-                    //               onTap: () {
-                    //                 Navigator.pushNamed(
-                    //                     context, DetailPage.routeName,
-                    //                     arguments: DetailArguments(
-                    //                         story: state.listStory[index]));
-                    //               },
-                    //             )),
-                    //       )
-                    //     ],
-                    //   ),
-                    // );
                   });
             }
           },
         ));
+  }
+
+  String _dateUpload(int time) {
+    final dates = DateTime.fromMillisecondsSinceEpoch(time * 1000);
+    print(dates);
+    return FuntionHelper.diffWithText(time);
   }
 
   void _onScroll() {

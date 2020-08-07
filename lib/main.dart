@@ -9,6 +9,7 @@ import 'package:hackernews_flutter/bloc/top/top_state.dart';
 import 'package:hackernews_flutter/screen/home.dart';
 import 'package:hackernews_flutter/utils/routes.dart';
 import 'package:hackernews_flutter/utils/values.dart';
+import 'package:intl/intl.dart';
 
 main() {
   Bloc.observer = MainBlocObserver();
@@ -28,7 +29,7 @@ class HackerNewsFlutter extends StatelessWidget {
         providers: [
           BlocProvider(create: (_) => NavigatorBloc(0)),
           BlocProvider(create: (_) => TopBloc(TopLoading())),
-          BlocProvider(create: (_) => NewBloc(NewLoading()),)
+          BlocProvider(create: (_) => NewBloc(NewLoading()),),
         ], 
         child: Home())
     );

@@ -78,8 +78,8 @@ class TopBloc extends Bloc<TopEvent, TopState> {
   List<int> recursiveStory(
       int total, TopLoaded loadedList, List<int> paramsStoryId) {
     if (total < 10 && loadedList.listStory.length + total <= cacheIds.length) {
-      total += 1;
       paramsStoryId.add(cacheIds[loadedList.listStory.length + total]);
+      total += 1;
       return recursiveStory(total, loadedList, paramsStoryId);
     } else {
       return paramsStoryId;
