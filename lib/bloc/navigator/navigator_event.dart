@@ -3,5 +3,6 @@
 enum NavigationType {
   TOP,
   NEW,
-  JOBS
+  JOBS,
+  SETTINGS
 }

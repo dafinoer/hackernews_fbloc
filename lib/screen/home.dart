@@ -8,6 +8,7 @@ import 'package:hackernews_flutter/bloc/navigator/navigator_event.dart';
 import 'package:hackernews_flutter/bloc/navigator/navigator_state.dart';
 import 'package:hackernews_flutter/screen/jobs/job_page.dart';
 import 'package:hackernews_flutter/screen/new/new_page.dart';
+import 'package:hackernews_flutter/screen/settings/settings_page.dart';
 import 'package:hackernews_flutter/screen/top/top_page.dart';
 import 'package:hackernews_flutter/widgets/bottom_nav_bar.dart';
 
@@ -40,6 +41,6 @@ class _HomeState extends State<Home> {
   }
 
   UnmodifiableListView<Widget> get _viewWidget {
-    return UnmodifiableListView([TopPage(), NewPage(), JobPage()]);
+    return UnmodifiableListView([TopPage(), NewPage(), JobPage(), SettingsPage()]);
   }
 }

@@ -30,8 +30,10 @@ class TopLoaded extends TopState {
     List<Story> newListStory,
     bool isMaxStory
   }){
-    this.listStory.addAll(newListStory);
-    this.isMax = isMaxStory;
+    return TopLoaded(
+      listStory: newListStory ?? this.listStory,
+      isMax: isMax ?? this.isMax
+    );
   }
 }
 

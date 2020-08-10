@@ -22,7 +22,8 @@ class _NewPageState extends State<NewPage> {
 
   @override
   void dispose() {
-    context.bloc<NewBloc>().close();
+    // final proivders = BlocProvider.of<NewBloc>(context);
+    // proivders.close();
     super.dispose();
   }
 

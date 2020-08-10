@@ -15,13 +15,8 @@ class CommentRepository extends BaseRepository {
 
   Future<Comment> fetchComment() async {
     try {
-      final resultJson = await _itemService.fetchItem(_url, options: Options(
-        method: 'GET',
-        responseType: ResponseType.bytes
-      ));
-      var dataByte = utf8.decode(resultJson);
-      var decodeJson = json.decode(dataByte);
-      return Comment.fromJson(decodeJson);
+      final resultJson = await _itemService.fetchItem(_url);
+      return Comment.fromJson(resultJson);
     } catch (e) {
       throw Exception(e);
     }

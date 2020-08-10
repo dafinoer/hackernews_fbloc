@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hackernews_flutter/bloc/navigator/navigator_event.dart';
-import 'package:hackernews_flutter/bloc/navigator/navigator_state.dart';
 
 class NavigatorBloc extends Bloc<NavigationType, int> {
   NavigatorBloc(int initialState) : super(0);
@@ -18,6 +17,10 @@ class NavigatorBloc extends Bloc<NavigationType, int> {
 
       case NavigationType.JOBS:
         yield 2;
+        break;
+
+      case NavigationType.SETTINGS:
+        yield 3;
         break;
       default:
     }

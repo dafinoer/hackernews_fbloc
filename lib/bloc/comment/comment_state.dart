@@ -14,5 +14,7 @@ class CommentLoading extends CommentState {}
 class CommentLoaded extends CommentState {
   final List<Comment> listOfComment;
 
-  CommentLoaded({this.listOfComment});
+  final List<Map<String, dynamic>> listValue;
+
+  CommentLoaded({this.listOfComment, this.listValue});
 }

@@ -12,44 +12,47 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
   CommentRepository _commentRepository = CommentRepository();
 
   @override
-  Stream<Transition<CommentEvent, CommentState>> transformEvents(Stream<CommentEvent> events, transitionFn) {
-    return super.transformEvents(events.debounceTime(Duration(milliseconds: 500)), transitionFn);
+  Stream<Transition<CommentEvent, CommentState>> transformEvents(
+      Stream<CommentEvent> events, transitionFn) {
+    return super.transformEvents(
+        events.debounceTime(Duration(milliseconds: 500)), transitionFn);
   }
 
   @override
   Stream<CommentState> mapEventToState(CommentEvent event) async* {
     if (event is CommentListOfId) {
       if (state is CommentLoading) {
-        final listId = event.listOfKids.map((e) {
-          _commentRepository
-              .setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
-          return _commentRepository.fetchComment();
+        var itemComment = listOfFuture(event.listOfKids);
+        var comments = await Future.wait(itemComment);
+        var temp = [];
+
+        comments.forEach((element) async {
+          if (element.kids.isNotEmpty) {
+            var listId = listOfFuture(element.kids);
+            var subCommentItem = await Future.wait(listId);
+            temp.add({'parent': element, 'sub': subCommentItem});
+          }
         });
-        final listOfComment = await Future.wait(listId);
-
-        print(listOfComment);
-
-        yield CommentLoaded(listOfComment: listOfComment);
+        yield CommentLoaded(listOfComment: comments);
       }
     }
   }
 
-  Future<List<Comment>> recursiveIdLoad(List<int> listOfId) async {
-    final listId = listOfId.map((e) {
-      _commentRepository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
-      return _commentRepository.fetchComment();
-    });
-    final listOfComment = await Future.wait(listId);
+  Future<Comment> newComment(int id, int indexId, int lengthKids) async {
+    if (indexId < lengthKids) {
+      _commentRepository
+          .setUrl(Endpoint.item.replaceAll('{id}', id.toString()));
+      final resultItem = await _commentRepository.fetchComment();
+      return newComment(
+          resultItem.kids[indexId], indexId + 1, resultItem.kids.length);
+    }
 
-    final List<Comment> temp = [];
-
-    listOfComment.forEach((element) async {
-      if (element.kids.isNotEmpty) {
-        var test = await recursiveIdLoad(listOfId);
-        temp.addAll(test);
-      }
-    });
-
-    return listOfComment + temp;
+    return null;
   }
+
+  List<Future<Comment>> listOfFuture(List<int> listId) => listId.map((e) {
+        final url = Endpoint.item.replaceAll('{id}', e.toString());
+        _commentRepository.setUrl(url);
+        return _commentRepository.fetchComment();
+      }).toList();
 }

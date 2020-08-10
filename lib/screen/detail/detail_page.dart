@@ -1,18 +1,14 @@
-import 'package:characters/characters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:hackernews_flutter/bloc/comment/comment_bloc.dart';
 import 'package:hackernews_flutter/bloc/comment/comment_event.dart';
 import 'package:hackernews_flutter/bloc/comment/comment_state.dart';
-import 'package:hackernews_flutter/model/story.dart';
+import 'package:hackernews_flutter/repository/comment_repository.dart';
 import 'package:hackernews_flutter/utils/detail_arguments.dart';
 import 'package:hackernews_flutter/utils/function_helper.dart';
 import 'package:hackernews_flutter/utils/values.dart';
+import 'package:hackernews_flutter/widgets/detail/list_comment_widget.dart';
 import 'package:hackernews_flutter/widgets/detail/text_and_icon_widget.dart';
-import 'package:html/parser.dart' show parse;
-import 'package:url_launcher/url_launcher.dart';
-
 
 class DetailPage extends StatefulWidget {
   static const routeName = '/detail-hackernews';
@@ -25,6 +21,7 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   CommentBloc _commentBloc;
+  CommentRepository _commentRepository = CommentRepository();
 
   @override
   void initState() {
@@ -35,7 +32,6 @@ class _DetailPageState extends State<DetailPage> {
   @override
   void didChangeDependencies() {
     final DetailArguments args = ModalRoute.of(context).settings.arguments;
-    print(args.story.kids);
     _commentBloc.add(CommentListOfId(listOfKids: args.story.kids));
     super.didChangeDependencies();
   }
@@ -119,6 +115,11 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Widget listComment(List<int> commentId) {
+    return BlocProvider.value(
+      value: _commentBloc,
+      child: ListCommentWidget(),
+    );
+    /*
     return BlocBuilder<CommentBloc, CommentState>(
         cubit: _commentBloc,
         builder: (_, state) {
@@ -136,24 +137,28 @@ class _DetailPageState extends State<DetailPage> {
                 padding: EdgeInsets.only(top: space_4x),
                 physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (_, index) {
-                  final txt = parse(state.listOfComment[index].text);
-
                   return ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Html(
-                      data: state.listOfComment[index].text,
-                      onLinkTap: (link) async {
-                        var url = link.toString();
-                        if (await canLaunch(url)) {
-                          await launch(url);
-                        } else {
-                          throw 'Could not launch $url';
-                        }
-                      },
-                    ),
-                  );
+                      contentPadding: EdgeInsets.zero,
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Html(
+                            data: state.listOfComment[index].text,
+                            onLinkTap: (link) async {
+                              var url = link.toString();
+                              if (await canLaunch(url)) {
+                                await launch(url);
+                              } else {
+                                throw 'Could not launch $url';
+                              }
+                            },
+                          ),
+                          //subComment(state.listOfComment[index].kids)
+                        ],
+                      ));
                 });
           }
         });
+        */
   }
 }

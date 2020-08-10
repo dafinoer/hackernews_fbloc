@@ -5,10 +5,8 @@ import 'package:hackernews_flutter/bloc/top/top_event.dart';
 import 'package:hackernews_flutter/bloc/top/top_state.dart';
 import 'package:hackernews_flutter/screen/detail/detail_page.dart';
 import 'package:hackernews_flutter/utils/detail_arguments.dart';
-import 'package:hackernews_flutter/utils/format_helper.dart';
 import 'package:hackernews_flutter/utils/function_helper.dart';
 import 'package:hackernews_flutter/utils/strings.dart';
-import 'package:hackernews_flutter/utils/values.dart';
 
 class TopPage extends StatefulWidget {
   @override
@@ -29,7 +27,7 @@ class _TopPage extends State<TopPage> {
 
   @override
   void dispose() {
-    context.bloc<TopBloc>().close();
+    // context.bloc<TopBloc>().close();
     super.dispose();
   }
 

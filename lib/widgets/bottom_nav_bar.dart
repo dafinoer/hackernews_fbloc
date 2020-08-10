@@ -8,15 +8,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    
     return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
       items: [
         BottomNavigationBarItem(
             icon: Icon(Icons.home), title: Text(Strings.top)),
         BottomNavigationBarItem(
             icon: Icon(Icons.history), title: Text(Strings.latests)),
         BottomNavigationBarItem(
-            icon: Icon(Icons.work), title: Text(Strings.job))
+            icon: Icon(Icons.work), title: Text(Strings.job)),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.settings), title: Text(Strings.settings))
       ],
       currentIndex: context.bloc<NavigatorBloc>().state,
       onTap: (index) {
@@ -26,6 +28,8 @@ class BottomNavBar extends StatelessWidget {
           context.bloc<NavigatorBloc>().add(NavigationType.NEW);
         } else if (index == 2) {
           context.bloc<NavigatorBloc>().add(NavigationType.JOBS);
+        } else if(index == 3){
+          context.bloc<NavigatorBloc>().add(NavigationType.SETTINGS);
         }
       },
     );

@@ -4,6 +4,7 @@ class Strings {
   static const String top = 'Top';
   static const String latests = 'New';
   static const String job  = 'Job';
+  static const String settings = 'Settings';
 
 
 
