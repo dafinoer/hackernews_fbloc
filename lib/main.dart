@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hackernews_flutter/bloc/job/job_bloc.dart';
+import 'package:hackernews_flutter/bloc/job/job_state.dart';
 import 'package:hackernews_flutter/bloc/navigator/navigator_bloc.dart';
 import 'package:hackernews_flutter/bloc/new/new_bloc.dart';
 import 'package:hackernews_flutter/bloc/new/new_state.dart';
@@ -30,6 +32,7 @@ class HackerNewsFlutter extends StatelessWidget {
           BlocProvider(create: (_) => NavigatorBloc(0)),
           BlocProvider(create: (_) => TopBloc(TopLoading())),
           BlocProvider(create: (_) => NewBloc(NewLoading()),),
+          BlocProvider(create: (_) => JobBloc(JobsLoading()),)
         ], 
         child: Home())
     );

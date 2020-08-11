@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -11,19 +9,22 @@ import 'package:url_launcher/url_launcher.dart';
 class ListCommentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     final provider = BlocProvider.of<CommentBloc>(context);
-    
+    final theme = Theme.of(context);
+
     return BlocBuilder<CommentBloc, CommentState>(
         cubit: provider,
         builder: (_, state) {
           if (state is CommentLoading) {
-            return Center(
-              child: CircularProgressIndicator(),
+            return Padding(
+              padding: EdgeInsets.only(top: space_4x),
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
             );
           }
 
-          if (state is CommentLoaded) {
+          if (state is CommentLoaded && state.listOfComment.isNotEmpty) {
             return ListView.separated(
                 separatorBuilder: (_, index) => Divider(),
                 itemCount: state.listOfComment.length,
@@ -40,17 +41,25 @@ class ListCommentWidget extends StatelessWidget {
                             data: state.listOfComment[index].text,
                             onLinkTap: (link) async {
                               var url = link.toString();
-                              if (await canLaunch(url)) {
-                                await launch(url);
-                              } else {
-                                throw 'Could not launch $url';
-                              }
+                              final isCanLaunch = await canLaunch(url);
+                              if (isCanLaunch) await launch(url); 
+                              else throw 'Could not launch $url';
                             },
                           ),
-                          //subComment(state.listOfComment[index].kids)
                         ],
                       ));
                 });
+          }
+
+          if (state is CommentLoaded && state.listOfComment.isEmpty) {
+            return Padding(
+              padding: EdgeInsets.only(top: space_4x),
+              child: Center(
+                  child: Text(
+                'No Comment',
+                style: theme.textTheme.subtitle2,
+              )),
+            );
           }
         });
   }

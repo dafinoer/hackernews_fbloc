@@ -7,6 +7,7 @@ import 'package:hackernews_flutter/screen/detail/detail_page.dart';
 import 'package:hackernews_flutter/utils/detail_arguments.dart';
 import 'package:hackernews_flutter/utils/function_helper.dart';
 import 'package:hackernews_flutter/utils/strings.dart';
+import 'package:hackernews_flutter/utils/values.dart';
 
 class TopPage extends StatefulWidget {
   @override
@@ -70,7 +71,20 @@ class _TopPage extends State<TopPage> {
                         state.listStory[index].title,
                         style: theme.textTheme.subtitle1,
                       ),
-                      subtitle: Text(_dateUpload(state.listStory[index].time)),
+                      subtitle: Row(
+                        children: <Widget>[
+                          Text(
+                          state.listStory[index].by,
+                          style: TextStyle(
+                              color: theme.primaryColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: space_3x),
+                            child: Text(_dateUpload(state.listStory[index].time)),
+                          )
+                        ],
+                      ),
                       onTap: () {
                         Navigator.pushNamed(context, DetailPage.routeName,
                             arguments:

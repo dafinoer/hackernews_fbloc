@@ -9,6 +9,7 @@ import 'package:hackernews_flutter/utils/function_helper.dart';
 import 'package:hackernews_flutter/utils/values.dart';
 import 'package:hackernews_flutter/widgets/detail/list_comment_widget.dart';
 import 'package:hackernews_flutter/widgets/detail/text_and_icon_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailPage extends StatefulWidget {
   static const routeName = '/detail-hackernews';
@@ -75,7 +76,7 @@ class _DetailPageState extends State<DetailPage> {
                     isMarginRight: false,
                     firstIcon: Icons.perm_identity,
                     fisrtTitleIcon: args.story.by,
-                    secondIcon: Icons.grade,
+                    secondIcon: Icons.favorite_border,
                     secondTitleIcon: args.story.score.toString(),
                   ),
                   TextAndIconWidget(
@@ -86,25 +87,41 @@ class _DetailPageState extends State<DetailPage> {
                     secondIcon: Icons.chat_bubble_outline,
                     secondTitleIcon: args.story.kids.length.toString(),
                   ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Icon(
-                        Icons.language,
-                        size: 12.0 * mediaQuery.devicePixelRatio,
-                      ),
-                      Expanded(
-                          child: Padding(
-                        padding: EdgeInsets.only(left: space_1x),
-                        child: GestureDetector(
-                          child: Text(
-                            args.story.url,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                  FlatButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () async {
+                      bool isCanLaunch = await canLaunch(args.story.url);
+
+                      if (isCanLaunch) {
+                        await launch(args.story.url);
+                      } else {
+                        print('error');
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(space_2x),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.language,
+                            size: 12.0 * mediaQuery.devicePixelRatio,
                           ),
-                        ),
-                      ))
-                    ],
+                          Expanded(
+                              child: Padding(
+                            padding: EdgeInsets.only(left: space_1x),
+                            child: GestureDetector(
+                              child: Text(
+                                args.story.url,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(color: Colors.blue[400]),
+                              ),
+                            ),
+                          ))
+                        ],
+                      ),
+                    ),
                   ),
                   listComment(args.story.kids),
                 ],
@@ -119,46 +136,5 @@ class _DetailPageState extends State<DetailPage> {
       value: _commentBloc,
       child: ListCommentWidget(),
     );
-    /*
-    return BlocBuilder<CommentBloc, CommentState>(
-        cubit: _commentBloc,
-        builder: (_, state) {
-          if (state is CommentLoading) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          if (state is CommentLoaded) {
-            return ListView.separated(
-                separatorBuilder: (_, index) => Divider(),
-                itemCount: state.listOfComment.length,
-                shrinkWrap: true,
-                padding: EdgeInsets.only(top: space_4x),
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (_, index) {
-                  return ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Html(
-                            data: state.listOfComment[index].text,
-                            onLinkTap: (link) async {
-                              var url = link.toString();
-                              if (await canLaunch(url)) {
-                                await launch(url);
-                              } else {
-                                throw 'Could not launch $url';
-                              }
-                            },
-                          ),
-                          //subComment(state.listOfComment[index].kids)
-                        ],
-                      ));
-                });
-          }
-        });
-        */
   }
 }

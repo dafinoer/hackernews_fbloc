@@ -3,8 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hackernews_flutter/bloc/new/new_bloc.dart';
 import 'package:hackernews_flutter/bloc/new/new_events.dart';
 import 'package:hackernews_flutter/bloc/new/new_state.dart';
+import 'package:hackernews_flutter/model/story.dart';
+import 'package:hackernews_flutter/screen/detail/detail_page.dart';
+import 'package:hackernews_flutter/utils/detail_arguments.dart';
+import 'package:hackernews_flutter/utils/function_helper.dart';
 import 'package:hackernews_flutter/utils/strings.dart';
 import 'package:hackernews_flutter/utils/values.dart';
+import 'package:hackernews_flutter/widgets/time_post_widget.dart';
 
 class NewPage extends StatefulWidget {
   @override
@@ -30,7 +35,7 @@ class _NewPageState extends State<NewPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
         appBar: AppBar(
           title: Text(Strings.latests),
@@ -54,40 +59,41 @@ class _NewPageState extends State<NewPage> {
                     ? state.listStory.length
                     : state.listStory.length + 1,
                 itemBuilder: (_, index) {
-
-                  if(index == state.listStory.length + 1){
-                    return Center(child: CircularProgressIndicator(),);
+                  if (index == state.listStory.length + 1) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
                   }
 
-                  return Padding(
-                      padding: EdgeInsets.symmetric(vertical: space_2x),
-                      child: ExpansionTile(
-                        title: Text(
-                          state.listStory[index].title,
-                          style: theme.textTheme.subtitle1,
+                  return ListTile(
+                    title: Text(state.listStory[index].title),
+                    subtitle: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          state.listStory[index].by,
+                          style: TextStyle(
+                              color: theme.primaryColor,
+                              fontWeight: FontWeight.bold),
                         ),
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: space_4x, vertical: space_2x),
-                            child: Align(
-                                alignment: Alignment.topLeft,
-                                child: GestureDetector(
-                                  child: Text(
-                                    state.listStory[index].url,
-                                    style: TextStyle(color: linkUrlColor),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  onTap: () {},
-                                )),
-                          )
-                        ],
-                      ),
-                    );
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: space_3x),
+                          child: TimePostWidget(
+                            milisecondEpoch: state.listStory[index].time,
+                          ),
+                        )
+                      ],
+                    ),
+                    onTap: () => ontapAction(state.listStory[index]),
+                  );
                 });
           }
         }));
+  }
+
+  void ontapAction(Story story) {
+    Navigator.pushNamed(context, DetailPage.routeName,
+        arguments: DetailArguments(story: story));
   }
 
   void firstEvent() {

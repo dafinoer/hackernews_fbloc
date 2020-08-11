@@ -1,3 +1,4 @@
+
 import 'package:bloc/bloc.dart';
 import 'package:hackernews_flutter/bloc/comment/comment_event.dart';
 import 'package:hackernews_flutter/bloc/comment/comment_state.dart';
@@ -38,15 +39,27 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     }
   }
 
+  Future<List<Comment>> infiniteListOfComment(Comment comment, List<Comment> listcom) async{
+    if(comment.kids.isNotEmpty){
+      final testIdList = listOfFuture(comment.kids);
+      final items = await Future.wait(testIdList);
+
+      return infiniteListOfComment(comment, listcom);
+    } else {
+      return listcom;
+    }
+  }
+
   Future<Comment> newComment(int id, int indexId, int lengthKids) async {
     if (indexId < lengthKids) {
-      _commentRepository
-          .setUrl(Endpoint.item.replaceAll('{id}', id.toString()));
+      _commentRepository.setUrl(Endpoint.item.replaceAll('{id}', id.toString()));
       final resultItem = await _commentRepository.fetchComment();
       return newComment(
-          resultItem.kids[indexId], indexId + 1, resultItem.kids.length);
+        resultItem.kids[indexId], 
+        indexId + 1, 
+        resultItem.kids.length
+        );
     }
-
     return null;
   }
 
