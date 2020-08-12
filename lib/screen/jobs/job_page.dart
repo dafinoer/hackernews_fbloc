@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hackernews_flutter/bloc/job/job_bloc.dart';
 import 'package:hackernews_flutter/bloc/job/job_event.dart';
 import 'package:hackernews_flutter/bloc/job/job_state.dart';
+import 'package:hackernews_flutter/bloc/settings/settings_bloc.dart';
 import 'package:hackernews_flutter/screen/detail/detail_page.dart';
 import 'package:hackernews_flutter/utils/detail_arguments.dart';
 import 'package:hackernews_flutter/utils/strings.dart';
@@ -49,6 +50,7 @@ class _JobPage extends State<JobPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(Strings.job),
@@ -79,7 +81,12 @@ class _JobPage extends State<JobPage> {
                       Text(
                         state.listOfJobs[index].by,
                         style: TextStyle(
-                            color: primaryColor, fontWeight: FontWeight.bold),
+                            color: BlocProvider.of<SettingsBloc>(context)
+                                    .state
+                                    .isDarkTheme
+                                ? theme.primaryColorLight
+                                : theme.primaryColor,
+                            fontWeight: FontWeight.bold),
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: space_3x),

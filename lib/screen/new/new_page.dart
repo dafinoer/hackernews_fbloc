@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hackernews_flutter/bloc/new/new_bloc.dart';
 import 'package:hackernews_flutter/bloc/new/new_events.dart';
 import 'package:hackernews_flutter/bloc/new/new_state.dart';
+import 'package:hackernews_flutter/bloc/settings/settings_bloc.dart';
 import 'package:hackernews_flutter/model/story.dart';
 import 'package:hackernews_flutter/screen/detail/detail_page.dart';
 import 'package:hackernews_flutter/utils/detail_arguments.dart';
@@ -54,7 +55,8 @@ class _NewPageState extends State<NewPage> {
           }
 
           if (state is NewLoaded) {
-            return ListView.builder(
+            return ListView.separated(
+              separatorBuilder: (_, index) => Divider(),
                 itemCount: state.isMax
                     ? state.listStory.length
                     : state.listStory.length + 1,
@@ -73,7 +75,11 @@ class _NewPageState extends State<NewPage> {
                         Text(
                           state.listStory[index].by,
                           style: TextStyle(
-                              color: theme.primaryColor,
+                              color: BlocProvider.of<SettingsBloc>(context)
+                                        .state
+                                        .isDarkTheme
+                                    ? theme.primaryColorLight
+                                    : theme.primaryColor,
                               fontWeight: FontWeight.bold),
                         ),
                         Padding(

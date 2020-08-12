@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hackernews_flutter/bloc/settings/settings_bloc.dart';
 import 'package:hackernews_flutter/bloc/top/top_bloc.dart';
 import 'package:hackernews_flutter/bloc/top/top_event.dart';
 import 'package:hackernews_flutter/bloc/top/top_state.dart';
@@ -54,7 +55,8 @@ class _TopPage extends State<TopPage> {
             }
 
             if (state is TopLoaded) {
-              return ListView.builder(
+              return ListView.separated(
+                  separatorBuilder: (_, index) => Divider(),
                   controller: _scrollController,
                   itemCount: state.isMax
                       ? state.listStory.length
@@ -74,14 +76,20 @@ class _TopPage extends State<TopPage> {
                       subtitle: Row(
                         children: <Widget>[
                           Text(
-                          state.listStory[index].by,
-                          style: TextStyle(
-                              color: theme.primaryColor,
-                              fontWeight: FontWeight.bold),
-                        ),
+                            state.listStory[index].by,
+                            style: TextStyle(
+                                color: BlocProvider.of<SettingsBloc>(context)
+                                        .state
+                                        .isDarkTheme
+                                    ? theme.primaryColorLight
+                                    : theme.primaryColor,
+                                fontWeight: FontWeight.bold),
+                          ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: space_3x),
-                            child: Text(_dateUpload(state.listStory[index].time)),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: space_3x),
+                            child:
+                                Text(_dateUpload(state.listStory[index].time)),
                           )
                         ],
                       ),
