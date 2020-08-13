@@ -7,10 +7,7 @@ the apps uses [Github Hackernews API](https://github.com/HackerNews/API.git) as 
 
 ## Screenshot
 <pre>
-<img src="screenshot/top.png" width="200">
-<img src="screenshot/new.png" width="200">
-<img src="screenshot/job.png" width="200">
-<img src="screenshot/detail.png" width="200">
+<img src="screenshot/top.png" width="200"> <img src="screenshot/new.png" width="200"> <img src="screenshot/job.png" width="200"> <img src="screenshot/detail.png" width="200">
 </pre>
 
 ## ✨ Requirements
