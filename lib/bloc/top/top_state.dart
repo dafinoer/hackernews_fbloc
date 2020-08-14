@@ -36,19 +36,3 @@ class TopLoaded extends TopState {
     );
   }
 }
-
-class TopIds extends TopState {
-  List<int> topIds;
-
-  bool isMax;
-
-  TopIds({this.topIds, this.isMax});
-
-  TopIds copyWith({
-    List<int> newIds,
-    bool isMax
-  }){
-    topIds.addAll(newIds);
-    this.isMax = isMax;
-  } 
-}

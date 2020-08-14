@@ -29,7 +29,9 @@ class NewLoaded extends NewState {
     List<Story> newListStory,
     bool isMaxList
   }){
-    this.listStory.addAll(newListStory);
-    this.isMax = isMaxList;
+    return NewLoaded(
+      listStory: newListStory ?? this.listStory,
+      isMax: isMaxList ?? this.isMax
+    );
   }
 }
