@@ -10,7 +10,7 @@ import 'package:rxdart/rxdart.dart';
 class TopBloc extends Bloc<TopEvent, TopState> {
   TopBloc(TopState initialState) : super(initialState);
 
-  final TopStoriesRepository _repository = TopStoriesRepository();
+  final TopStoriesRepository repository = TopStoriesRepository();
 
   final List<int> cacheIds = [];
 
@@ -43,7 +43,7 @@ class TopBloc extends Bloc<TopEvent, TopState> {
   }
 
   Stream<TopState> loadingState(TopIdEvent event) async* {
-    final listId = await _repository.fetchIds(Endpoint.top_stories_ids);
+    final listId = await repository.fetchIds(Endpoint.top_stories_ids);
 
     if (listId.isNotEmpty) {
       cacheIds.addAll(listId);
@@ -87,13 +87,13 @@ class TopBloc extends Bloc<TopEvent, TopState> {
     try {
       if (start != null && limit != null) {
         temps = paramsId.getRange(start, limit).map((e) {
-          _repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
-          return _repository.fetchStories();
+          repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
+          return repository.fetchStories();
         }).toList();
       } else {
         temps = paramsId.map((e) {
-          _repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
-          return _repository.fetchStories();
+          repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
+          return repository.fetchStories();
         }).toList();
       }
       return temps;

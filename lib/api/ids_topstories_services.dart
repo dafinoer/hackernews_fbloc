@@ -13,6 +13,7 @@ class IdsServices {
       final Response resultFromJson = await BaseApi.getData(url: urlEndpoint);
       return List.from(resultFromJson.data);
     } catch (e) {
+      print(e);
       throw Exception(e);
     }
   }

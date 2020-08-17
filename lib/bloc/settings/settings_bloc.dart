@@ -18,4 +18,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsMenu> {
   Stream<SettingsMenu> darkTheme(DarkTheme event, SettingsMenu menu) async* {
     yield menu.copyWith(isDark: event.isDarkTheme);
   }
+
+  @override
+  // TODO: implement hashCode
+  int get hashCode => super.hashCode;
 }
