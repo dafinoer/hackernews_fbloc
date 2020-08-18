@@ -18,12 +18,19 @@ the apps uses [Github Hackernews API](https://github.com/HackerNews/API.git) as 
 
 * A little knowledge of Dart and Flutter.
 
+## Todo list
+* [] tree comment
+* [] pull to refresh
+* [] change primary color
+* [*] dark theme
+* [] font size
+
 ## Built With 🛠
 
 * [x] <a href="https://pub.dev/packages/dio">Dio</a>
 * [x] <a href="https://pub.dev/packages/rxdart">Rx Dart</a>
 * [x] <a href="https://bloclibrary.dev/#/">Flutter BloC</a>
-* [x] <a href="[https://pub.dev/packages/url_launcher](https://pub.dev/packages/url_launcher)">url_launcher</a>
+* [x] <a href="[https://pub.dev/packages/url_launcher](https://pub.dev/packages/url_launcher)">url launcher</a>
 * [ ] <a href="https://flutter.dev/docs/deployment/flavors">Flavor</a> on Android Only
 * [ ] <a href="https://flutter.dev/docs/cookbook/testing/unit/mocking">Unit Testing (Mockito)</a>
 * [ ] <a href="https://flutter.dev/docs/cookbook/testing/integration/introductionIntegration">Instrumentation Testing</a>
