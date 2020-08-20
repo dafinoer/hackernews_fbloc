@@ -13,3 +13,8 @@ class NewStoriesEvent extends NewEvent {
 
   NewStoriesEvent({this.limit, this.start});
 }
+
+
+class RefreshNewStoriesEvent extends NewStoriesEvent {
+  RefreshNewStoriesEvent(int start, int limit) : super(start:start, limit:limit);
+}

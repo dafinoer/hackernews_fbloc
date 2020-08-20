@@ -18,10 +18,11 @@ class NewError extends NewState {
   NewError({this.txt});
 }
 
-class NewLoaded extends NewState {
-  List<Story> listStory;
+class NewLoaded extends NewState with EquatableMixin{
 
-  bool isMax;
+  final List<Story> listStory;
+
+  final bool isMax;
 
   NewLoaded({this.listStory, this.isMax});
 
@@ -34,4 +35,7 @@ class NewLoaded extends NewState {
       isMax: isMaxList ?? this.isMax
     );
   }
+
+  @override
+  List<Object> get props => super.props..addAll([listStory, isMax]);
 }
