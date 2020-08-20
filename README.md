@@ -19,11 +19,12 @@ the apps uses [Github Hackernews API](https://github.com/HackerNews/API.git) as 
 * A little knowledge of Dart and Flutter.
 
 ## Todo list
-* [ ] tree comment
-* [X] pull to refresh
-* [ ] change primary color
-* [X] dark theme
-* [ ] font size
+* [ ] Tree comment
+* [X] Pull to refresh
+* [ ] Change primary color
+* [X] Dark theme
+* [ ] Font size
+* [ ] Open URL in App
 
 ## Built With 🛠
 
