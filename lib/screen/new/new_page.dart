@@ -20,9 +20,14 @@ class NewPage extends StatefulWidget {
 }
 
 class _NewPageState extends State<NewPage> {
+
+  ScrollController _scrollController;
+
   @override
   void initState() {
     firstEvent();
+    _scrollController = ScrollController();
+    _scrollController.addListener(onScroll);
     super.initState();
   }
 
@@ -30,7 +35,16 @@ class _NewPageState extends State<NewPage> {
   void dispose() {
     // final proivders = BlocProvider.of<NewBloc>(context);
     // proivders.close();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void onScroll() {
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    if (maxScroll - currentScroll <= 200.0) {
+      context.bloc<NewBloc>().add(NewStoriesEvent());
+    }
   }
 
   @override
@@ -55,44 +69,49 @@ class _NewPageState extends State<NewPage> {
           }
 
           if (state is NewLoaded) {
-            return ListView.separated(
-              separatorBuilder: (_, index) => Divider(),
-                itemCount: state.isMax
-                    ? state.listStory.length
-                    : state.listStory.length + 1,
-                itemBuilder: (_, index) {
-                  if (index == state.listStory.length + 1) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
+            return RefreshIndicator(
+                child: ListView.separated(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  controller: _scrollController,
+                    separatorBuilder: (_, index) => Divider(),
+                    itemCount: state.isMax
+                        ? state.listStory.length
+                        : state.listStory.length + 1,
+                    itemBuilder: (_, index) {
+                      if (index >= state.listStory.length) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
 
-                  return ListTile(
-                    title: Text(state.listStory[index].title),
-                    subtitle: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          state.listStory[index].by,
-                          style: TextStyle(
-                              color: BlocProvider.of<SettingsBloc>(context)
-                                        .state
-                                        .isDarkTheme
-                                    ? theme.primaryColorLight
-                                    : theme.primaryColor,
-                              fontWeight: FontWeight.bold),
+                      return ListTile(
+                        title: Text(state.listStory[index].title),
+                        subtitle: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              state.listStory[index].by,
+                              style: TextStyle(
+                                  color: BlocProvider.of<SettingsBloc>(context)
+                                          .state
+                                          .isDarkTheme
+                                      ? theme.primaryColorLight
+                                      : theme.primaryColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Padding(
+                              padding:
+                                  EdgeInsets.symmetric(horizontal: space_3x),
+                              child: TimePostWidget(
+                                milisecondEpoch: state.listStory[index].time,
+                              ),
+                            )
+                          ],
                         ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: space_3x),
-                          child: TimePostWidget(
-                            milisecondEpoch: state.listStory[index].time,
-                          ),
-                        )
-                      ],
-                    ),
-                    onTap: () => ontapAction(state.listStory[index]),
-                  );
-                });
+                        onTap: () => ontapAction(state.listStory[index]),
+                      );
+                    }),
+                onRefresh: () {});
           }
         }));
   }

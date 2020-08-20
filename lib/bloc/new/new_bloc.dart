@@ -55,7 +55,9 @@ class NewBloc extends Bloc<NewEvent, NewState> {
 
     final listStories = await Future.wait(itemLimitStory);
 
-    yield NewLoaded(listStory: listStories, isMax: false);
+    yield NewLoaded(
+        listStory: listStories.where((element) => element != null).toList(),
+        isMax: false);
   }
 
   Stream<NewState> newLoadMore(NewLoaded newLoadedState) async* {
@@ -71,10 +73,8 @@ class NewBloc extends Bloc<NewEvent, NewState> {
         }).toList();
         final listOfItem = await Future.wait(itemListNewStories);
 
-        print((newLoadedState.listStory + listOfItem).length);
-
         yield NewLoaded(
-            listStory: newLoadedState.listStory + listOfItem, isMax: false);
+            listStory: newLoadedState.listStory + listOfItem.where((e) => e != null).toList(), isMax: false);
       } else {
         yield newLoadedState.copyWith(isMaxList: true);
       }
