@@ -43,12 +43,14 @@ class _TopPage extends State<TopPage> {
           title: Text(Strings.top),
         ),
         body: RefreshIndicator(
-          color: context.bloc<SettingsBloc>().state.isDarkTheme ? theme.accentColor : primaryColor,
+          color: context.bloc<SettingsBloc>().state.isDarkTheme
+              ? theme.accentColor
+              : primaryColor,
           onRefresh: () async {
             context.bloc<TopBloc>().add(RefreshPullRequest(0, 20));
             return await Future.delayed(Duration(milliseconds: 500));
           },
-                  child: BlocConsumer<TopBloc, TopState>(
+          child: BlocConsumer<TopBloc, TopState>(
             listener: (_, state) {
               if (state is TopError) {
                 FuntionHelper.showSnackbar(context, 'uppps error');
@@ -95,15 +97,15 @@ class _TopPage extends State<TopPage> {
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: space_3x),
-                              child:
-                                  Text(_dateUpload(state.listStory[index].time)),
+                              child: Text(
+                                  _dateUpload(state.listStory[index].time)),
                             )
                           ],
                         ),
                         onTap: () {
                           Navigator.pushNamed(context, DetailPage.routeName,
-                              arguments:
-                                  DetailArguments(story: state.listStory[index]));
+                              arguments: DetailArguments(
+                                  story: state.listStory[index]));
                         },
                       );
                     });
