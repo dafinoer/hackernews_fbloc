@@ -20,7 +20,6 @@ class NewPage extends StatefulWidget {
 }
 
 class _NewPageState extends State<NewPage> {
-
   ScrollController _scrollController;
 
   @override
@@ -55,65 +54,70 @@ class _NewPageState extends State<NewPage> {
         appBar: AppBar(
           title: Text(Strings.latests),
         ),
-        body: BlocBuilder<NewBloc, NewState>(builder: (_, state) {
-          if (state is NewLoading) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+        body: RefreshIndicator(
+          color: context.bloc<SettingsBloc>().state.isDarkTheme ? theme.accentColor : primaryColor,
+          onRefresh: () async {
+            context.bloc<NewBloc>().add(RefreshNewStoriesEvent(0, 20));
+            return await Future.delayed(Duration(milliseconds: 500));
+          },
+          child: BlocBuilder<NewBloc, NewState>(builder: (_, state) {
+            if (state is NewLoading) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
 
-          if (state is NewError) {
-            return Center(
-              child: Text(state.txt),
-            );
-          }
+            if (state is NewError) {
+              return Center(
+                child: Text(state.txt),
+              );
+            }
 
-          if (state is NewLoaded) {
-            return RefreshIndicator(
-                child: ListView.separated(
+            if (state is NewLoaded) {
+              return ListView.separated(
+                padding: EdgeInsets.only(top: space_2x),
                   physics: AlwaysScrollableScrollPhysics(),
                   controller: _scrollController,
-                    separatorBuilder: (_, index) => Divider(),
-                    itemCount: state.isMax
-                        ? state.listStory.length
-                        : state.listStory.length + 1,
-                    itemBuilder: (_, index) {
-                      if (index >= state.listStory.length) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-
-                      return ListTile(
-                        title: Text(state.listStory[index].title),
-                        subtitle: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              state.listStory[index].by,
-                              style: TextStyle(
-                                  color: BlocProvider.of<SettingsBloc>(context)
-                                          .state
-                                          .isDarkTheme
-                                      ? theme.primaryColorLight
-                                      : theme.primaryColor,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Padding(
-                              padding:
-                                  EdgeInsets.symmetric(horizontal: space_3x),
-                              child: TimePostWidget(
-                                milisecondEpoch: state.listStory[index].time,
-                              ),
-                            )
-                          ],
-                        ),
-                        onTap: () => ontapAction(state.listStory[index]),
+                  separatorBuilder: (_, index) => Divider(),
+                  itemCount: state.isMax
+                      ? state.listStory.length
+                      : state.listStory.length + 1,
+                  itemBuilder: (_, index) {
+                    if (index >= state.listStory.length) {
+                      return Center(
+                        child: CircularProgressIndicator(),
                       );
-                    }),
-                onRefresh: () {});
-          }
-        }));
+                    }
+
+                    return ListTile(
+                      title: Text(state.listStory[index].title),
+                      subtitle: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            state.listStory[index].by,
+                            style: TextStyle(
+                                color: BlocProvider.of<SettingsBloc>(context)
+                                        .state
+                                        .isDarkTheme
+                                    ? theme.primaryColorLight
+                                    : theme.primaryColor,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: space_3x),
+                            child: TimePostWidget(
+                              milisecondEpoch: state.listStory[index].time,
+                            ),
+                          )
+                        ],
+                      ),
+                      onTap: () => ontapAction(state.listStory[index]),
+                    );
+                  });
+            }
+          }),
+        ));
   }
 
   void ontapAction(Story story) {

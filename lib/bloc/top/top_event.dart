@@ -11,3 +11,8 @@ class TopIdEvent extends TopEvent {
 
   TopIdEvent({this.limit, this.indexStart});
 }
+
+
+class RefreshPullRequest extends TopIdEvent{
+  RefreshPullRequest(int start, int limit) : super(limit: start, indexStart:limit);
+}

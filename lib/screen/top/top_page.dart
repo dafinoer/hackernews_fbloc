@@ -30,6 +30,7 @@ class _TopPage extends State<TopPage> {
   @override
   void dispose() {
     // context.bloc<TopBloc>().close();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -41,67 +42,74 @@ class _TopPage extends State<TopPage> {
         appBar: AppBar(
           title: Text(Strings.top),
         ),
-        body: BlocConsumer<TopBloc, TopState>(
-          listener: (_, state) {
-            if (state is TopError) {
-              FuntionHelper.showSnackbar(context, 'uppps error');
-            }
+        body: RefreshIndicator(
+          color: context.bloc<SettingsBloc>().state.isDarkTheme ? theme.accentColor : primaryColor,
+          onRefresh: () async {
+            context.bloc<TopBloc>().add(RefreshPullRequest(0, 20));
+            return await Future.delayed(Duration(milliseconds: 500));
           },
-          builder: (_, state) {
-            if (state is TopLoading) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+                  child: BlocConsumer<TopBloc, TopState>(
+            listener: (_, state) {
+              if (state is TopError) {
+                FuntionHelper.showSnackbar(context, 'uppps error');
+              }
+            },
+            builder: (_, state) {
+              if (state is TopLoading) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-            if (state is TopLoaded) {
-              return ListView.separated(
-                  separatorBuilder: (_, index) => Divider(),
-                  controller: _scrollController,
-                  itemCount: state.isMax
-                      ? state.listStory.length
-                      : state.listStory.length + 1,
-                  itemBuilder: (_, index) {
-                    if (index >= state.listStory.length) {
-                      return Center(
-                        child: CircularProgressIndicator(),
+              if (state is TopLoaded) {
+                return ListView.separated(
+                    separatorBuilder: (_, index) => Divider(),
+                    controller: _scrollController,
+                    itemCount: state.isMax
+                        ? state.listStory.length
+                        : state.listStory.length + 1,
+                    itemBuilder: (_, index) {
+                      if (index >= state.listStory.length) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      return ListTile(
+                        title: Text(
+                          state.listStory[index].title,
+                          style: theme.textTheme.subtitle1,
+                        ),
+                        subtitle: Row(
+                          children: <Widget>[
+                            Text(
+                              state.listStory[index].by,
+                              style: TextStyle(
+                                  color: BlocProvider.of<SettingsBloc>(context)
+                                          .state
+                                          .isDarkTheme
+                                      ? theme.primaryColorLight
+                                      : theme.primaryColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: space_3x),
+                              child:
+                                  Text(_dateUpload(state.listStory[index].time)),
+                            )
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.pushNamed(context, DetailPage.routeName,
+                              arguments:
+                                  DetailArguments(story: state.listStory[index]));
+                        },
                       );
-                    }
-
-                    return ListTile(
-                      title: Text(
-                        state.listStory[index].title,
-                        style: theme.textTheme.subtitle1,
-                      ),
-                      subtitle: Row(
-                        children: <Widget>[
-                          Text(
-                            state.listStory[index].by,
-                            style: TextStyle(
-                                color: BlocProvider.of<SettingsBloc>(context)
-                                        .state
-                                        .isDarkTheme
-                                    ? theme.primaryColorLight
-                                    : theme.primaryColor,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: space_3x),
-                            child:
-                                Text(_dateUpload(state.listStory[index].time)),
-                          )
-                        ],
-                      ),
-                      onTap: () {
-                        Navigator.pushNamed(context, DetailPage.routeName,
-                            arguments:
-                                DetailArguments(story: state.listStory[index]));
-                      },
-                    );
-                  });
-            }
-          },
+                    });
+              }
+            },
+          ),
         ));
   }
 

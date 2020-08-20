@@ -55,66 +55,73 @@ class _JobPage extends State<JobPage> {
       appBar: AppBar(
         title: Text(Strings.job),
       ),
-      body: BlocBuilder<JobBloc, JobState>(builder: (_, state) {
-        if (state is JobsLoading) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (state is JobLoaded) {
-          return ListView.separated(
-              separatorBuilder: (_, index) => Divider(),
-              controller: _scrollController,
-              itemCount: state.isMax
-                  ? state.listOfJobs.length
-                  : state.listOfJobs.length + 1,
-              itemBuilder: (_, index) {
-                if (index >= state.listOfJobs.length) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                return ListTile(
-                  title: Text(state.listOfJobs[index].title),
-                  subtitle: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        state.listOfJobs[index].by,
-                        style: TextStyle(
-                            color: BlocProvider.of<SettingsBloc>(context)
-                                    .state
-                                    .isDarkTheme
-                                ? theme.primaryColorLight
-                                : theme.primaryColor,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: space_3x),
-                        child: TimePostWidget(
-                          milisecondEpoch: state.listOfJobs[index].time,
+      body: RefreshIndicator(
+        color: context.bloc<SettingsBloc>().state.isDarkTheme ? theme.accentColor : primaryColor,
+        onRefresh: () async {
+          context.bloc<JobBloc>().add(PullRefreshIndex(0, 20));
+          return await Future.delayed(Duration(milliseconds: 500));
+        },
+              child: BlocBuilder<JobBloc, JobState>(builder: (_, state) {
+          if (state is JobsLoading) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state is JobLoaded) {
+            return ListView.separated(
+                separatorBuilder: (_, index) => Divider(),
+                controller: _scrollController,
+                itemCount: state.isMax
+                    ? state.listOfJobs.length
+                    : state.listOfJobs.length + 1,
+                itemBuilder: (_, index) {
+                  if (index >= state.listOfJobs.length) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return ListTile(
+                    title: Text(state.listOfJobs[index].title),
+                    subtitle: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          state.listOfJobs[index].by,
+                          style: TextStyle(
+                              color: BlocProvider.of<SettingsBloc>(context)
+                                      .state
+                                      .isDarkTheme
+                                  ? theme.primaryColorLight
+                                  : theme.primaryColor,
+                              fontWeight: FontWeight.bold),
                         ),
-                      ),
-                    ],
-                  ),
-                  onTap: () async {
-                    var urlLink = await canLaunch(state.listOfJobs[index].url);
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: space_3x),
+                          child: TimePostWidget(
+                            milisecondEpoch: state.listOfJobs[index].time,
+                          ),
+                        ),
+                      ],
+                    ),
+                    onTap: () async {
+                      var urlLink = await canLaunch(state.listOfJobs[index].url);
 
-                    if (urlLink) {
-                      await launch(state.listOfJobs[index].url);
-                    } else {
-                      throw 'Could not launch ${state.listOfJobs[index].url}';
-                    }
-                  },
-                );
-              });
-        } else if (state is JobError) {
-          return Center(
-            child: Text(state.txt),
-          );
-        } else {
-          return const SizedBox();
-        }
-      }),
+                      if (urlLink) {
+                        await launch(state.listOfJobs[index].url);
+                      } else {
+                        throw 'Could not launch ${state.listOfJobs[index].url}';
+                      }
+                    },
+                  );
+                });
+          } else if (state is JobError) {
+            return Center(
+              child: Text(state.txt),
+            );
+          } else {
+            return const SizedBox();
+          }
+        }),
+      ),
     );
   }
 }

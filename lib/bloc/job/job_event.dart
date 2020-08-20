@@ -10,3 +10,7 @@ class EventIndexStart extends JobEvent{
 
   EventIndexStart({this.start, this.limit});
 }
+
+class PullRefreshIndex extends EventIndexStart {
+  PullRefreshIndex(int start, int limit) : super(start: start, limit: limit);
+}

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc/bloc.dart';
 import 'package:hackernews_flutter/bloc/top/top_event.dart';
@@ -36,6 +37,9 @@ class TopBloc extends Bloc<TopEvent, TopState> {
         if (currentState is TopLoaded) {
           yield* moreDataLoading(currentState);
         }
+      } else if (event is RefreshIndicatorState) {
+        cacheIds.clear();
+        yield* loadingState(event);
       }
     } catch (e) {
       yield TopError(txt: e.toString());

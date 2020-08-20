@@ -20,7 +20,7 @@ the apps uses [Github Hackernews API](https://github.com/HackerNews/API.git) as 
 
 ## Todo list
 * [ ] tree comment
-* [ ] pull to refresh
+* [X] pull to refresh
 * [ ] change primary color
 * [X] dark theme
 * [ ] font size
