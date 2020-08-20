@@ -6,6 +6,11 @@ class Strings {
   static const String job  = 'Job';
   static const String settings = 'Settings';
 
+  static const String dark_theme = 'Dark Theme';
+  static const String view = 'View';
+  static const String subtitle_view = 'Layout of items in the lists';
+  static const String use_browser_external = 'Use external browser';
+  static const String subtitle_use_browser_external = 'Instead of in-app one';
 
 
   /**

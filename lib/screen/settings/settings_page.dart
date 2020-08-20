@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hackernews_flutter/bloc/settings/settings_bloc.dart';
 import 'package:hackernews_flutter/bloc/settings/settings_event.dart';
 import 'package:hackernews_flutter/bloc/settings/settings_state.dart';
+import 'package:hackernews_flutter/utils/strings.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -12,12 +13,9 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  
   @override
   Widget build(BuildContext context) {
     final provider = BlocProvider.of<SettingsBloc>(context);
-    
-    
 
     return Scaffold(
       appBar: AppBar(
@@ -37,7 +35,33 @@ class _SettingsPageState extends State<SettingsPage> {
                 context.bloc<SettingsBloc>().add(DarkTheme(isDarkTheme: value));
               },
             ),
-            Divider()
+            Divider(),
+            ListTile(
+              title: Text(
+                Strings.view,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(Strings.subtitle_view),
+              trailing: DropdownButton(
+                value: BlocProvider.of<SettingsBloc>(context).state.typeList.toString().replaceAll('TypeList.', ''),
+                  items: ['Normal', 'Compact'].map((e) {
+                    return DropdownMenuItem(
+                      child: Text(e),
+                      value: e,
+                    );
+                  }).toList(),
+                  onChanged: (String value) {
+                    if (value.contains('Normal')) {
+                      context
+                          .bloc<SettingsBloc>()
+                          .add(ChoiceTypeList(TypeList.Normal));
+                    } else {
+                      context
+                          .bloc<SettingsBloc>()
+                          .add(ChoiceTypeList(TypeList.Compact));
+                    }
+                  }),
+            )
           ],
         ),
       ),

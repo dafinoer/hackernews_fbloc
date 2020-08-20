@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hackernews_flutter/bloc/settings/settings_bloc.dart';
+import 'package:hackernews_flutter/bloc/settings/settings_event.dart';
 import 'package:hackernews_flutter/bloc/top/top_bloc.dart';
 import 'package:hackernews_flutter/bloc/top/top_event.dart';
 import 'package:hackernews_flutter/bloc/top/top_state.dart';
@@ -9,6 +10,7 @@ import 'package:hackernews_flutter/utils/detail_arguments.dart';
 import 'package:hackernews_flutter/utils/function_helper.dart';
 import 'package:hackernews_flutter/utils/strings.dart';
 import 'package:hackernews_flutter/utils/values.dart';
+import 'package:hackernews_flutter/widgets/detail/text_and_icon_widget.dart';
 
 class TopPage extends StatefulWidget {
   @override
@@ -82,26 +84,59 @@ class _TopPage extends State<TopPage> {
                           state.listStory[index].title,
                           style: theme.textTheme.subtitle1,
                         ),
-                        subtitle: Row(
-                          children: <Widget>[
-                            Text(
-                              state.listStory[index].by,
-                              style: TextStyle(
-                                  color: BlocProvider.of<SettingsBloc>(context)
-                                          .state
-                                          .isDarkTheme
-                                      ? theme.primaryColorLight
-                                      : theme.primaryColor,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: space_3x),
-                              child: Text(
-                                  _dateUpload(state.listStory[index].time)),
-                            )
-                          ],
-                        ),
+                        subtitle: context.bloc<SettingsBloc>().state.typeList ==
+                                TypeList.Normal
+                            ? Padding(
+                                padding: EdgeInsets.only(top: space_2x),
+                                child: Row(
+                                  children: <Widget>[
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.favorite_border,
+                                          size: space_4x,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: space_1x),
+                                          child: Text(
+                                            state.listStory[index].score
+                                                .toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .subtitle2,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: space_3x),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.message, size: space_4x),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: space_1x),
+                                            child: Text(
+                                              state.listStory[index].kids.length
+                                                  .toString(),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .subtitle2,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
+                            : null,
                         onTap: () {
                           Navigator.pushNamed(context, DetailPage.routeName,
                               arguments: DetailArguments(

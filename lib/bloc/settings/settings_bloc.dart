@@ -11,6 +11,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsMenu> {
       case DarkTheme:
         yield* darkTheme(event, state);
         break;
+      case ChoiceTypeList:
+        yield* typeList(event, state);
+        break;
       default:
     }
   }
@@ -19,7 +22,10 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsMenu> {
     yield menu.copyWith(isDark: event.isDarkTheme);
   }
 
+  Stream<SettingsMenu> typeList(ChoiceTypeList type, SettingsMenu menu) async* {
+    yield menu.copyWith(typeList: type.typeList);
+  }
+
   @override
-  // TODO: implement hashCode
   int get hashCode => super.hashCode;
 }
