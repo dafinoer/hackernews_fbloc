@@ -4,12 +4,14 @@ import 'package:hackernews_flutter/bloc/new/new_bloc.dart';
 import 'package:hackernews_flutter/bloc/new/new_events.dart';
 import 'package:hackernews_flutter/bloc/new/new_state.dart';
 import 'package:hackernews_flutter/bloc/settings/settings_bloc.dart';
+import 'package:hackernews_flutter/bloc/settings/settings_event.dart';
 import 'package:hackernews_flutter/model/story.dart';
 import 'package:hackernews_flutter/screen/detail/detail_page.dart';
 import 'package:hackernews_flutter/utils/detail_arguments.dart';
 import 'package:hackernews_flutter/utils/function_helper.dart';
 import 'package:hackernews_flutter/utils/strings.dart';
 import 'package:hackernews_flutter/utils/values.dart';
+import 'package:hackernews_flutter/widgets/icontext_widget.dart';
 import 'package:hackernews_flutter/widgets/time_post_widget.dart';
 
 class NewPage extends StatefulWidget {
@@ -55,7 +57,9 @@ class _NewPageState extends State<NewPage> {
           title: Text(Strings.latests),
         ),
         body: RefreshIndicator(
-          color: context.bloc<SettingsBloc>().state.isDarkTheme ? theme.accentColor : primaryColor,
+          color: context.bloc<SettingsBloc>().state.isDarkTheme
+              ? theme.accentColor
+              : primaryColor,
           onRefresh: () async {
             context.bloc<NewBloc>().add(RefreshNewStoriesEvent(0, 20));
             return await Future.delayed(Duration(milliseconds: 500));
@@ -75,7 +79,7 @@ class _NewPageState extends State<NewPage> {
 
             if (state is NewLoaded) {
               return ListView.separated(
-                padding: EdgeInsets.only(top: space_2x),
+                  padding: EdgeInsets.only(top: space_2x),
                   physics: AlwaysScrollableScrollPhysics(),
                   controller: _scrollController,
                   separatorBuilder: (_, index) => Divider(),
@@ -91,27 +95,31 @@ class _NewPageState extends State<NewPage> {
 
                     return ListTile(
                       title: Text(state.listStory[index].title),
-                      subtitle: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            state.listStory[index].by,
-                            style: TextStyle(
-                                color: BlocProvider.of<SettingsBloc>(context)
-                                        .state
-                                        .isDarkTheme
-                                    ? theme.primaryColorLight
-                                    : theme.primaryColor,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: space_3x),
-                            child: TimePostWidget(
-                              milisecondEpoch: state.listStory[index].time,
-                            ),
-                          )
-                        ],
-                      ),
+                      subtitle: context.bloc<SettingsBloc>().state.typeList ==
+                              TypeList.Normal
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: space_2x),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  IconTextWidget(
+                                    typeIcon: Icons.favorite_border,
+                                    text:
+                                        state.listStory[index].score.toString(),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: space_3x),
+                                    child: IconTextWidget(
+                                      typeIcon: Icons.message,
+                                      text: state.listStory[index].kids.length
+                                          .toString(),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : null,
                       onTap: () => ontapAction(state.listStory[index]),
                     );
                   });

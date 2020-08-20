@@ -56,8 +56,7 @@ class _DetailPageState extends State<DetailPage> {
         body: SafeArea(
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: space_4x, vertical: space_4x),
+              padding: EdgeInsets.symmetric(vertical: space_4x),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
