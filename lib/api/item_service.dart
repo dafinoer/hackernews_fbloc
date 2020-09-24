@@ -3,8 +3,6 @@
 
 import 'package:dio/dio.dart';
 import 'package:hackernews_flutter/api/base_api.dart';
-import 'package:hackernews_flutter/utils/endpoints.dart';
-import 'dart:convert';
 
 class ItemService {
   
