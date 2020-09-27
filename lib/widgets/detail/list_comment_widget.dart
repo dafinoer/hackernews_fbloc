@@ -9,11 +9,10 @@ import 'package:url_launcher/url_launcher.dart';
 class ListCommentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final provider = BlocProvider.of<CommentBloc>(context);
     final theme = Theme.of(context);
 
     return BlocBuilder<CommentBloc, CommentState>(
-        cubit: provider,
+        cubit: BlocProvider.of<CommentBloc>(context),
         builder: (_, state) {
           if (state is CommentLoading) {
             return Padding(
@@ -32,22 +31,32 @@ class ListCommentWidget extends StatelessWidget {
                 padding: EdgeInsets.only(top: space_4x),
                 physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (_, index) {
-                  return ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Html(
-                            data: state.listOfComment[index].text,
-                            onLinkTap: (link) async {
-                              var url = link.toString();
-                              final isCanLaunch = await canLaunch(url);
-                              if (isCanLaunch) await launch(url); 
-                              else throw 'Could not launch $url';
-                            },
-                          ),
-                        ],
-                      ));
+
+                  return Container(
+                    decoration: BoxDecoration(
+                        border: Border(
+                            left: BorderSide(color: Colors.deepOrange[100]))),
+                    child: ExpansionTile(
+                      children: [ListTile()],
+                      title: Container(
+                        // padding:
+                        //     EdgeInsets.only(left: 8.0 * typeComment.toDouble()),
+                        child: Html(
+                          data: state.listOfComment[index].text,
+                          onLinkTap: _onTapUrl,
+                        ),
+                      ),
+                      expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                      subtitle: FlatButton(
+                          onPressed: () {},
+                          child: state.listOfComment[index] != null &&
+                                  state.listOfComment[index].kids.isNotEmpty
+                              ? Text(state.listOfComment[index].kids.length
+                                      .toString() +
+                                  ' Comments')
+                              : const SizedBox()),
+                    ),
+                  );
                 });
           }
 
@@ -61,6 +70,24 @@ class ListCommentWidget extends StatelessWidget {
               )),
             );
           }
+
+          if (state is CommentError) {
+            return Padding(
+              padding: EdgeInsets.only(top: space_4x),
+              child: Center(
+                  child: Text(
+                'upps something wrong',
+                style: theme.textTheme.subtitle2,
+              )),
+            );
+          }
+          return const SizedBox();
         });
   }
+
+    void _onTapUrl(String link) async {
+      var url = link.toString();
+      if (await canLaunch(url)) await launch(url);
+      else throw 'Could not launch $url';
+    }
 }

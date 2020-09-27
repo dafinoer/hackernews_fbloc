@@ -1,9 +1,15 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc/bloc.dart';
+import 'package:hackernews_flutter/api/top_source.dart';
 import 'package:hackernews_flutter/bloc/top/top_event.dart';
 import 'package:hackernews_flutter/bloc/top/top_state.dart';
+import 'package:hackernews_flutter/common/remote/config/dio_module.dart';
+import 'package:hackernews_flutter/common/remote/config/result.dart';
 import 'package:hackernews_flutter/model/story.dart';
+import 'package:hackernews_flutter/repository/home/home_repository.dart';
+import 'package:hackernews_flutter/repository/home/home_repository_imp.dart';
 import 'package:hackernews_flutter/repository/topstories_repository.dart';
 import 'package:hackernews_flutter/utils/endpoints.dart';
 import 'package:rxdart/rxdart.dart';
@@ -12,6 +18,9 @@ class TopBloc extends Bloc<TopEvent, TopState> {
   TopBloc(TopState initialState) : super(initialState);
 
   final TopStoriesRepository repository = TopStoriesRepository();
+
+  final TopRepositoryImp _repo =
+      TopRepositoryImp(TopSource(DioModule.getInstance()));
 
   final List<int> cacheIds = [];
 
@@ -47,12 +56,12 @@ class TopBloc extends Bloc<TopEvent, TopState> {
   }
 
   Stream<TopState> loadingState(TopIdEvent event) async* {
-    final listId = await repository.fetchIds(Endpoint.top_stories_ids);
+    final itemResult = await _repo.getTopIds();
 
-    if (listId.isNotEmpty) {
-      cacheIds.addAll(listId);
-      final listTemp = listOfStory(cacheIds, start: event.indexStart, limit: event.limit);
-
+    if (itemResult.isNotEmpty) {
+      cacheIds.addAll(itemResult);
+      final listTemp =
+          listOfStory(cacheIds, start: event.indexStart, limit: event.limit);
       var listData = await Future.wait(listTemp);
       yield TopLoaded(isMax: false, listStory: listData);
     }
@@ -71,7 +80,9 @@ class TopBloc extends Bloc<TopEvent, TopState> {
       yield TopLoaded(
           listStory: currentState.listStory + listNewLoadedStory, isMax: false);
     } else {
-      yield currentState.copyWith(isMaxStory: true,);
+      yield currentState.copyWith(
+        isMaxStory: true,
+      );
     }
   }
 
@@ -88,21 +99,17 @@ class TopBloc extends Bloc<TopEvent, TopState> {
 
   List<Future<Story>> listOfStory(List<int> paramsId, {int start, int limit}) {
     var temps = [];
-    try {
-      if (start != null && limit != null) {
-        temps = paramsId.getRange(start, limit).map((e) {
-          repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
-          return repository.fetchStories();
-        }).toList();
-      } else {
-        temps = paramsId.map((e) {
-          repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
-          return repository.fetchStories();
-        }).toList();
-      }
-      return temps;
-    } catch (e) {
-      throw Exception(e);
+    if (start != null && limit != null) {
+      temps = paramsId.getRange(start, limit).map((e) {
+        repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
+        return repository.fetchStories();
+      }).toList();
+    } else {
+      temps = paramsId.take(10).map((e) {
+        repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
+        return repository.fetchStories();
+      }).toList();
     }
+    return temps;
   }
 }

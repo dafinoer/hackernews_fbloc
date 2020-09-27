@@ -11,11 +11,13 @@ import 'package:hackernews_flutter/bloc/settings/settings_state.dart';
 import 'package:hackernews_flutter/bloc/top/top_bloc.dart';
 import 'package:hackernews_flutter/bloc/top/top_state.dart';
 import 'package:hackernews_flutter/screen/home.dart';
+import 'package:hackernews_flutter/utils/logger_config.dart';
 import 'package:hackernews_flutter/utils/routes.dart';
 import 'package:hackernews_flutter/utils/values.dart';
 import 'package:intl/intl.dart';
 
 main() {
+  LoggerConfig.instance();
   Bloc.observer = MainBlocObserver();
   runApp(HackerNewsFlutter());
 }

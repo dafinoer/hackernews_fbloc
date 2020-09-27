@@ -5,12 +5,12 @@ import 'package:hackernews_flutter/bloc/settings/settings_event.dart';
 import 'package:hackernews_flutter/bloc/top/top_bloc.dart';
 import 'package:hackernews_flutter/bloc/top/top_event.dart';
 import 'package:hackernews_flutter/bloc/top/top_state.dart';
+import 'package:hackernews_flutter/model/story.dart';
 import 'package:hackernews_flutter/screen/detail/detail_page.dart';
 import 'package:hackernews_flutter/utils/detail_arguments.dart';
 import 'package:hackernews_flutter/utils/function_helper.dart';
 import 'package:hackernews_flutter/utils/strings.dart';
 import 'package:hackernews_flutter/utils/values.dart';
-import 'package:hackernews_flutter/widgets/detail/text_and_icon_widget.dart';
 
 class TopPage extends StatefulWidget {
   @override
@@ -67,6 +67,7 @@ class _TopPage extends State<TopPage> {
 
               if (state is TopLoaded) {
                 return ListView.separated(
+                    padding: EdgeInsets.only(top: space_4x),
                     separatorBuilder: (_, index) => Divider(),
                     controller: _scrollController,
                     itemCount: state.isMax
@@ -123,7 +124,7 @@ class _TopPage extends State<TopPage> {
                                             padding: const EdgeInsets.only(
                                                 left: space_1x),
                                             child: Text(
-                                              state.listStory[index].kids.length
+                                              state.listStory[index].descendants
                                                   .toString(),
                                               style: Theme.of(context)
                                                   .textTheme
@@ -137,17 +138,18 @@ class _TopPage extends State<TopPage> {
                                 ),
                               )
                             : null,
-                        onTap: () {
-                          Navigator.pushNamed(context, DetailPage.routeName,
-                              arguments: DetailArguments(
-                                  story: state.listStory[index]));
-                        },
+                        onTap: () => _onTapAction(state.listStory[index]),
                       );
                     });
               }
             },
           ),
         ));
+  }
+
+  void _onTapAction(Story story) {
+    Navigator.pushNamed(context, DetailPage.routeName,
+        arguments: DetailArguments(story: story));
   }
 
   String _dateUpload(int time) {

@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:hackernews_flutter/api/item_service.dart';
 import 'package:hackernews_flutter/model/comment.dart';
-import 'package:hackernews_flutter/repository/base_repository.dart';
-import 'package:hackernews_flutter/utils/endpoints.dart';
 
 class CommentRepository {
   final ItemService _itemService = ItemService();
@@ -18,5 +16,12 @@ class CommentRepository {
     }
   }
 
-  
+  Future<List<Comment>> quequeAsync(List<String> params) async {
+    try {
+      final results = await Future.wait(params.map((e) => fetchComment(e)).toList());
+      return results;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }  
 }

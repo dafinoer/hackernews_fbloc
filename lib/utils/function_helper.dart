@@ -1,5 +1,9 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
+import 'package:hackernews_flutter/utils/endpoints.dart';
 import 'package:hackernews_flutter/utils/format_helper.dart';
+import 'package:hackernews_flutter/utils/values.dart';
 
 class FuntionHelper {
   static void showSnackbar(BuildContext context, String text) {
@@ -16,7 +20,8 @@ class FuntionHelper {
   }
 
   static int diffInHour(int time) {
-    final double diff = (DateTime.now().millisecondsSinceEpoch - time) / 3600000;
+    final double diff =
+        (DateTime.now().millisecondsSinceEpoch - time) / 3600000;
     return diff.round();
   }
 
@@ -24,6 +29,7 @@ class FuntionHelper {
     final double diff = (DateTime.now().millisecondsSinceEpoch - time) / 60000;
     return diff.round();
   }
+
   static String diffWithText(int time) {
     int dayUpload = FuntionHelper.diffInMinutes(time * 1000);
 
@@ -43,5 +49,17 @@ class FuntionHelper {
           DateTime.fromMillisecondsSinceEpoch(time * 1000));
       return dateString;
     }
+  }
+
+  Color commentColors(int index) {
+    return UnmodifiableListView(
+        [parent_comment, parent_second, parent_thirth, parent_fourth])[index];
+  }
+
+   static List<String> convertToEndpoint(List<int> listId) {
+    return listId.map((e) {
+      final url = Endpoint.item.replaceAll('{id}', e.toString());
+      return url;
+    }).toList();
   }
 }

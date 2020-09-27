@@ -18,3 +18,9 @@ class CommentLoaded extends CommentState {
 
   CommentLoaded({this.listOfComment, this.listValue});
 }
+
+class CommentError extends CommentState {
+  final String text;
+
+  CommentError(this.text);
+}
