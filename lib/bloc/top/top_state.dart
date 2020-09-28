@@ -1,14 +1,17 @@
 
 
 
+import 'package:equatable/equatable.dart';
 import 'package:hackernews_flutter/model/story.dart';
 
-abstract class TopState {
-
+abstract class TopState extends Equatable{
+  @override
+  List<Object> get props => [];
 }
 
 
-class TopLoading extends TopState {}
+class TopLoading extends TopState {
+}
 
 
 class TopError extends TopState {
@@ -32,7 +35,11 @@ class TopLoaded extends TopState {
   }){
     return TopLoaded(
       listStory: newListStory ?? this.listStory,
-      isMax: isMax ?? this.isMax
+      isMax: isMaxStory ?? this.isMax
     );
   }
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [listStory, isMax];
 }

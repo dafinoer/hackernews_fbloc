@@ -55,8 +55,8 @@ class TopBloc extends Bloc<TopEvent, TopState> {
     final itemResult = await _repo.getTopIds();
 
     if (itemResult.isNotEmpty) {
-      cacheIds.addAll(itemResult);
-      final results = await _repo.getStories(itemResult);
+      cacheIds.addAll(itemResult.take(50).toList());
+      final results = await _repo.getStories(itemResult.take(10).toList());
       yield TopLoaded(isMax: false, listStory: results);
     }
   }
@@ -67,8 +67,7 @@ class TopBloc extends Bloc<TopEvent, TopState> {
     if (cacheIds.length > nextLimit) {
       final itemCacheId = recursiveStory(0, currentState, []);
       final results = await _repo.getStories(itemCacheId);
-      yield TopLoaded(
-          listStory: currentState.listStory + results, isMax: false);
+      yield TopLoaded(listStory: currentState.listStory + results, isMax: false);
     } else {
       yield currentState.copyWith(
         isMaxStory: true,

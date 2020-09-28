@@ -9,6 +9,7 @@ import 'package:hackernews_flutter/model/story.dart';
 import 'package:hackernews_flutter/screen/detail/detail_page.dart';
 import 'package:hackernews_flutter/utils/detail_arguments.dart';
 import 'package:hackernews_flutter/utils/function_helper.dart';
+import 'package:hackernews_flutter/utils/logger_config.dart';
 import 'package:hackernews_flutter/utils/strings.dart';
 import 'package:hackernews_flutter/utils/values.dart';
 
@@ -79,7 +80,6 @@ class _TopPage extends State<TopPage> {
                           child: CircularProgressIndicator(),
                         );
                       }
-
                       return ListTile(
                         title: Text(
                           state.listStory[index].title,

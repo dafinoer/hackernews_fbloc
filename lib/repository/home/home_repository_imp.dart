@@ -4,6 +4,7 @@ import 'package:hackernews_flutter/common/remote/config/network_func.dart';
 import 'package:hackernews_flutter/common/remote/config/result.dart';
 import 'package:hackernews_flutter/model/story.dart';
 import 'package:hackernews_flutter/repository/home/home_repository.dart';
+import 'package:hackernews_flutter/utils/logger_config.dart';
 
 class TopRepositoryImp extends TopRepository {
   TopSource _topSource;
@@ -45,8 +46,13 @@ class TopRepositoryImp extends TopRepository {
     try {
       final items = params.map((e) async {
         final item = await _topSource.fetchItem(e);
-        if (item.status == Status.succes) return item.body;
-        else throw Exception(item.code);
+        if (item.status == Status.succes) {
+          return item.body;
+        } else {
+          LoggerConfig.log.d(item.code ?? 'none');
+          // throw Exception(
+          //     'code : ${item?.code} --> ${item?.errorBody} --> dio : ${item?.dioError}');
+        }
       }).toList();
       return Future.wait(items);
     } catch (e) {
