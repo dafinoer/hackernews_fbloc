@@ -6,12 +6,8 @@ import 'package:hackernews_flutter/api/top_source.dart';
 import 'package:hackernews_flutter/bloc/top/top_event.dart';
 import 'package:hackernews_flutter/bloc/top/top_state.dart';
 import 'package:hackernews_flutter/common/remote/config/dio_module.dart';
-import 'package:hackernews_flutter/common/remote/config/result.dart';
-import 'package:hackernews_flutter/model/story.dart';
-import 'package:hackernews_flutter/repository/home/home_repository.dart';
 import 'package:hackernews_flutter/repository/home/home_repository_imp.dart';
 import 'package:hackernews_flutter/repository/topstories_repository.dart';
-import 'package:hackernews_flutter/utils/endpoints.dart';
 import 'package:rxdart/rxdart.dart';
 
 class TopBloc extends Bloc<TopEvent, TopState> {
@@ -60,10 +56,8 @@ class TopBloc extends Bloc<TopEvent, TopState> {
 
     if (itemResult.isNotEmpty) {
       cacheIds.addAll(itemResult);
-      final listTemp =
-          listOfStory(cacheIds, start: event.indexStart, limit: event.limit);
-      var listData = await Future.wait(listTemp);
-      yield TopLoaded(isMax: false, listStory: listData);
+      final results = await _repo.getStories(itemResult);
+      yield TopLoaded(isMax: false, listStory: results);
     }
   }
 
@@ -72,13 +66,9 @@ class TopBloc extends Bloc<TopEvent, TopState> {
 
     if (cacheIds.length > nextLimit) {
       final itemCacheId = recursiveStory(0, currentState, []);
-
-      final listTemp = listOfStory(itemCacheId);
-
-      final listNewLoadedStory = await Future.wait(listTemp);
-
+      final results = await _repo.getStories(itemCacheId);
       yield TopLoaded(
-          listStory: currentState.listStory + listNewLoadedStory, isMax: false);
+          listStory: currentState.listStory + results, isMax: false);
     } else {
       yield currentState.copyWith(
         isMaxStory: true,
@@ -95,21 +85,5 @@ class TopBloc extends Bloc<TopEvent, TopState> {
     } else {
       return paramsStoryId;
     }
-  }
-
-  List<Future<Story>> listOfStory(List<int> paramsId, {int start, int limit}) {
-    var temps = [];
-    if (start != null && limit != null) {
-      temps = paramsId.getRange(start, limit).map((e) {
-        repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
-        return repository.fetchStories();
-      }).toList();
-    } else {
-      temps = paramsId.take(10).map((e) {
-        repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
-        return repository.fetchStories();
-      }).toList();
-    }
-    return temps;
   }
 }

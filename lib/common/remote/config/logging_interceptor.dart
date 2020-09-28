@@ -37,5 +37,6 @@ class LoggingInterceptor extends Interceptor {
 
   @override
   Future<FutureOr> onResponse(Response response) async{
+    LoggerConfig.log.d(response.data);
   }
 }

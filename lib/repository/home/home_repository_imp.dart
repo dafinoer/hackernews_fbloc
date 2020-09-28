@@ -32,12 +32,25 @@ class TopRepositoryImp extends TopRepository {
         return items;
         break;
       case Status.error:
-        throw Exception('code : ${responseItem?.code} --> ${responseItem?.errorBody} --> dio : ${responseItem?.dioError}');
-        // throw Exception('error : ${responseItem.code}');
-        // print(responseItem.code ?? 'none');
+        throw Exception(
+            'code : ${responseItem?.code} --> ${responseItem?.errorBody} --> dio : ${responseItem?.dioError}');
         break;
       default:
         throw ArgumentError();
+    }
+  }
+
+  @override
+  Future<List<Story>> getStories(List<int> params) async {
+    try {
+      final items = params.map((e) async {
+        final item = await _topSource.fetchItem(e);
+        if (item.status == Status.succes) return item.body;
+        else throw Exception(item.code);
+      }).toList();
+      return Future.wait(items);
+    } catch (e) {
+      throw Exception(e);
     }
   }
 }
