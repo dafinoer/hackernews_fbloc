@@ -1,7 +1,4 @@
-import 'package:hackernews_flutter/api/base_api.dart';
 import 'package:hackernews_flutter/api/ids_topstories_services.dart';
-import 'package:hackernews_flutter/api/item_service.dart';
-import 'package:hackernews_flutter/model/story.dart';
 import 'package:hackernews_flutter/repository/base_repository.dart';
 import 'package:hackernews_flutter/repository/stories_repository.dart';
 

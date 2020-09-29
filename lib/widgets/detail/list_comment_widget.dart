@@ -1,15 +1,22 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:hackernews_flutter/bloc/comment/bloc.dart';
 import 'package:hackernews_flutter/bloc/comment/comment_bloc.dart';
 import 'package:hackernews_flutter/bloc/comment/comment_state.dart';
+import 'package:hackernews_flutter/model/comment.dart';
 import 'package:hackernews_flutter/utils/values.dart';
+import 'package:hackernews_flutter/widgets/detail/comment_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ListCommentWidget extends StatelessWidget {
+  BuildContext _listCommentContext;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    _listCommentContext = context;
 
     return BlocBuilder<CommentBloc, CommentState>(
         cubit: BlocProvider.of<CommentBloc>(context),
@@ -31,32 +38,7 @@ class ListCommentWidget extends StatelessWidget {
                 padding: EdgeInsets.only(top: space_4x),
                 physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (_, index) {
-
-                  return Container(
-                    decoration: BoxDecoration(
-                        border: Border(
-                            left: BorderSide(color: Colors.deepOrange[100]))),
-                    child: ExpansionTile(
-                      children: [ListTile()],
-                      title: Container(
-                        // padding:
-                        //     EdgeInsets.only(left: 8.0 * typeComment.toDouble()),
-                        child: Html(
-                          data: state.listOfComment[index].text,
-                          onLinkTap: _onTapUrl,
-                        ),
-                      ),
-                      expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                      subtitle: FlatButton(
-                          onPressed: () {},
-                          child: state.listOfComment[index] != null &&
-                                  state.listOfComment[index].kids.isNotEmpty
-                              ? Text(state.listOfComment[index].kids.length
-                                      .toString() +
-                                  ' Comments')
-                              : const SizedBox()),
-                    ),
-                  );
+                  return CommentWidget(state.listOfComment[index]);
                 });
           }
 
@@ -85,9 +67,19 @@ class ListCommentWidget extends StatelessWidget {
         });
   }
 
-    void _onTapUrl(String link) async {
-      var url = link.toString();
-      if (await canLaunch(url)) await launch(url);
-      else throw 'Could not launch $url';
-    }
+  Widget buttonLoadWidget(Comment comment) {
+    return FlatButton(
+        onPressed: () => _onTapLoadComment(comment),
+        child: Text(comment.kids.length.toString() + ' Comments'));
+  }
+
+  void _onTapUrl(String link) async {
+    var url = link.toString();
+    if (await canLaunch(url)) await launch(url);
+    else throw 'Could not launch $url';
+  }
+
+  void _onTapLoadComment(Comment comment) {
+    _listCommentContext.bloc<CommentBloc>().add(CommentItem(comment));
+  }
 }

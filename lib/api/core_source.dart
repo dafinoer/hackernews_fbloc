@@ -4,18 +4,18 @@ import 'package:hackernews_flutter/common/remote/config/result.dart';
 import 'package:hackernews_flutter/model/story.dart';
 import 'package:hackernews_flutter/utils/endpoints.dart';
 
-class TopSource extends BaseRemote {
-  TopSource(Dio dio) : super(dio);
+class BaseSource extends BaseRemote {
+  BaseSource(Dio dio) : super(dio);
 
-  Future<Result<List<dynamic>>> fetchTopStory() async {
-    const url = Endpoint.TOP;
-    final responeResult = await getMethod(url, converter: (respone) => List.from(respone));
+  Future<Result<List<dynamic>>> fetchIds(String urls) async {
+    final responeResult = await getMethod(urls, converter: (respone) => List.from(respone));
     return responeResult;
   }
 
-  Future<Result<Story>> fetchItem(int id) async {
-    final url = Endpoint.ITEM.replaceAll('{id}', id.toString());
+  Future<Result<dynamic>> fetchItem(String urlparams) async {
+    final url = Endpoint.ITEM.replaceAll('{id}', urlparams);
     final responseResult = await getMethod(url, converter: (respone) => Story.fromJson(respone));
     return responseResult;
   }
+  
 }

@@ -8,11 +8,9 @@ import 'package:hackernews_flutter/bloc/settings/settings_event.dart';
 import 'package:hackernews_flutter/model/story.dart';
 import 'package:hackernews_flutter/screen/detail/detail_page.dart';
 import 'package:hackernews_flutter/utils/detail_arguments.dart';
-import 'package:hackernews_flutter/utils/function_helper.dart';
 import 'package:hackernews_flutter/utils/strings.dart';
 import 'package:hackernews_flutter/utils/values.dart';
 import 'package:hackernews_flutter/widgets/icontext_widget.dart';
-import 'package:hackernews_flutter/widgets/time_post_widget.dart';
 
 class NewPage extends StatefulWidget {
   @override
@@ -77,7 +75,7 @@ class _NewPageState extends State<NewPage> {
               );
             }
 
-            if (state is NewLoaded) {
+            if (state is NewLoaded && state.listStory.isNotEmpty) {
               return ListView.separated(
                   padding: EdgeInsets.only(top: space_2x),
                   physics: AlwaysScrollableScrollPhysics(),
@@ -94,7 +92,7 @@ class _NewPageState extends State<NewPage> {
                     }
 
                     return ListTile(
-                      title: Text(state.listStory[index].title),
+                      title: Text(state.listStory[index]?.title ?? ''),
                       subtitle: context.bloc<SettingsBloc>().state.typeList ==
                               TypeList.Normal
                           ? Padding(
@@ -105,15 +103,14 @@ class _NewPageState extends State<NewPage> {
                                   IconTextWidget(
                                     typeIcon: Icons.favorite_border,
                                     text:
-                                        state.listStory[index].score.toString(),
+                                        state.listStory[index]?.score.toString() ?? '',
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: space_3x),
                                     child: IconTextWidget(
                                       typeIcon: Icons.message,
-                                      text: state.listStory[index].kids.length
-                                          .toString(),
+                                      text: state.listStory[index]?.kids?.length?.toString() ?? '',
                                     ),
                                   ),
                                 ],
@@ -124,6 +121,7 @@ class _NewPageState extends State<NewPage> {
                     );
                   });
             }
+            return const SizedBox();
           }),
         ));
   }

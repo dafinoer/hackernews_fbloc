@@ -34,15 +34,15 @@ class FuntionHelper {
     int dayUpload = FuntionHelper.diffInMinutes(time * 1000);
 
     if (dayUpload < 60) {
-      var diffInMinutesAgo = '${dayUpload} minutes ago';
+      var diffInMinutesAgo = '$dayUpload minutes ago';
       return diffInMinutesAgo;
     } else if (dayUpload >= 60 && dayUpload < 1440) {
       int diffinHour = FuntionHelper.diffInHour(time * 1000);
-      final diffInHourToString = '${diffinHour} hour ago';
+      final diffInHourToString = '$diffinHour hour ago';
       return diffInHourToString;
     } else if (dayUpload >= 1440 && dayUpload <= 10080) {
       int diffInDay = FuntionHelper.diffInDay(time * 1000);
-      final diffIndayToString = '${diffInDay} days ago';
+      final diffIndayToString = '$diffInDay days ago';
       return diffIndayToString;
     } else {
       var dateString = FormatHelper.simpelFormat(
@@ -53,7 +53,7 @@ class FuntionHelper {
 
   Color commentColors(int index) {
     return UnmodifiableListView(
-        [parent_comment, parent_second, parent_thirth, parent_fourth])[index];
+        [parentComment, parentSecond, parentThirth, parentFourth])[index];
   }
 
    static List<String> convertToEndpoint(List<int> listId) {

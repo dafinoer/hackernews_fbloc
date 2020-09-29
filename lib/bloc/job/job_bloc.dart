@@ -2,9 +2,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hackernews_flutter/api/ids_topstories_services.dart';
 import 'package:hackernews_flutter/bloc/job/job_event.dart';
 import 'package:hackernews_flutter/bloc/job/job_state.dart';
+import 'package:hackernews_flutter/common/remote/config/dio_module.dart';
+import 'package:hackernews_flutter/repository/jobs/job_repository_imp.dart';
 import 'package:hackernews_flutter/repository/jobs_repository.dart';
 import 'package:hackernews_flutter/utils/endpoints.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:hackernews_flutter/api/core_source.dart';
 
 class JobBloc extends Bloc<JobEvent, JobState> {
   JobBloc(JobState initialState) : super(initialState);
@@ -13,23 +16,28 @@ class JobBloc extends Bloc<JobEvent, JobState> {
 
   IdsServices _idsServices = IdsServices();
 
+  JobRepositoryImpl repositoryImpl =
+      JobRepositoryImpl(BaseSource(DioModule.getInstance()));
+
   final cacheId = [];
 
   bool _isMax(JobState state) => state is JobLoaded && state.isMax;
 
   @override
-  Stream<Transition<JobEvent, JobState>> transformEvents(Stream<JobEvent> events, transitionFn) {
-    return super.transformEvents(events.debounceTime(Duration(milliseconds: 500)), transitionFn);
+  Stream<Transition<JobEvent, JobState>> transformEvents(
+      Stream<JobEvent> events, transitionFn) {
+    return super.transformEvents(
+        events.debounceTime(Duration(milliseconds: 500)), transitionFn);
   }
 
   @override
   Stream<JobState> mapEventToState(JobEvent event) async* {
     final currentState = state;
     try {
-      if(event is EventIndexStart && !_isMax(state)){
-        if(currentState is JobsLoading){
+      if (event is EventIndexStart && !_isMax(state)) {
+        if (currentState is JobsLoading) {
           yield* loadingStream(event);
-        } else if(currentState is JobLoaded){
+        } else if (currentState is JobLoaded) {
           yield* infiniteItem(currentState);
         }
       }
@@ -39,19 +47,14 @@ class JobBloc extends Bloc<JobEvent, JobState> {
   }
 
   Stream<JobState> loadingStream(EventIndexStart event) async* {
-    final result = await _idsServices.fetchIds(Endpoint.job_stories_id);
+    final result = await repositoryImpl.getIds();
 
     if (result.isNotEmpty) {
-      cacheId.addAll(result);
-      final limitId = cacheId.getRange(event.start, event.limit).toList();
+      cacheId.addAll(result.take(50).toList());
+      final limitId = cacheId.take(10).toList();
+      final dataIds = await repositoryImpl.getStories(limitId);
 
-      final dataId = limitId.map((e) {
-        _repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
-        return _repository.fetchJobs();
-      }).toList();
-
-      final jobsList = await Future.wait(dataId);
-      yield JobLoaded(listOfJobs: jobsList, isMax: false);
+      yield JobLoaded(listOfJobs: dataIds, isMax: false);
     } else {
       yield JobLoaded(isMax: true, listOfJobs: []);
     }
@@ -60,20 +63,13 @@ class JobBloc extends Bloc<JobEvent, JobState> {
   Stream<JobState> infiniteItem(JobLoaded jobLoadedState) async* {
     final jobsListLength = jobLoadedState.listOfJobs.length;
 
-    if(cacheId.length > jobsListLength){
+    if (cacheId.length > jobsListLength) {
       final indexIds = recursiveId(0, [], jobLoadedState);
-      final dataId = indexIds.map((e) {
-        _repository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
-        return _repository.fetchJobs();
-      });
-      
-      final newJobList = await Future.wait(dataId);
+      final items = await repositoryImpl.getStories(indexIds);
 
-      yield JobLoaded(listOfJobs: jobLoadedState.listOfJobs + newJobList, isMax: false);
+      yield JobLoaded(listOfJobs: jobLoadedState.listOfJobs + items, isMax: false);
     } else {
-      yield jobLoadedState.copyWith(
-        isMax: true
-      );
+      yield jobLoadedState.copyWith(isMax: true);
     }
   }
 
@@ -87,5 +83,4 @@ class JobBloc extends Bloc<JobEvent, JobState> {
       return params;
     }
   }
-
 }

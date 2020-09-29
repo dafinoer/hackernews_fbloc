@@ -13,10 +13,23 @@ class CommentLoading extends CommentState {}
 
 class CommentLoaded extends CommentState {
   final List<Comment> listOfComment;
+  final bool isMax;
 
-  final List<Map<String, dynamic>> listValue;
+  CommentLoaded({this.listOfComment, this.isMax});
 
-  CommentLoaded({this.listOfComment, this.listValue});
+  @override
+  List<Object> get props => [listOfComment, isMax];
+
+  CommentLoaded copywith({
+    List<Comment> list,
+    bool isMaxList,
+  }) {
+    return CommentLoaded(
+      listOfComment: list ?? this.listOfComment,
+      isMax: isMaxList ?? this.isMax
+    );
+  }
+
 }
 
 class CommentError extends CommentState {

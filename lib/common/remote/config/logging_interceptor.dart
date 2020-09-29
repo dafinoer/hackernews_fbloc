@@ -8,18 +8,18 @@ class LoggingInterceptor extends Interceptor {
   Future<FutureOr> onRequest(RequestOptions options) async{
     LoggerConfig.log.d("Headers");
     options.headers
-        .forEach((key, value) => LoggerConfig.log.i('k:${key} v:${value}'));
+        .forEach((key, value) => LoggerConfig.log.i('k:$key v:$value'));
 
     if(options.queryParameters != null){
       LoggerConfig.log.d("queryparams");
       options.queryParameters
-          .forEach((key, value) => LoggerConfig.log.i('k:${key} v:${value}'));
+          .forEach((key, value) => LoggerConfig.log.i('k:$key v:$value'));
     }
 
     if (options.data != null) {
       LoggerConfig.log.d("data");
       options.data
-          .forEach((key, value) => LoggerConfig.log.i('k:${key} v:${value}'));
+          .forEach((key, value) => LoggerConfig.log.i('k:$key v:$value'));
     }
     return options;
   }

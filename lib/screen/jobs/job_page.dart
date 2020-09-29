@@ -5,12 +5,11 @@ import 'package:hackernews_flutter/bloc/job/job_bloc.dart';
 import 'package:hackernews_flutter/bloc/job/job_event.dart';
 import 'package:hackernews_flutter/bloc/job/job_state.dart';
 import 'package:hackernews_flutter/bloc/settings/settings_bloc.dart';
-import 'package:hackernews_flutter/screen/detail/detail_page.dart';
-import 'package:hackernews_flutter/utils/detail_arguments.dart';
 import 'package:hackernews_flutter/utils/strings.dart';
 import 'package:hackernews_flutter/utils/values.dart';
 import 'package:hackernews_flutter/widgets/time_post_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 
 class JobPage extends StatefulWidget {
   @override

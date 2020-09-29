@@ -3,14 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hackernews_flutter/bloc/comment/comment_bloc.dart';
 import 'package:hackernews_flutter/bloc/comment/comment_event.dart';
 import 'package:hackernews_flutter/bloc/comment/comment_state.dart';
-import 'package:hackernews_flutter/repository/comment_repository.dart';
 import 'package:hackernews_flutter/utils/detail_arguments.dart';
 import 'package:hackernews_flutter/utils/function_helper.dart';
 import 'package:hackernews_flutter/utils/values.dart';
 import 'package:hackernews_flutter/widgets/detail/link_widget.dart';
 import 'package:hackernews_flutter/widgets/detail/list_comment_widget.dart';
 import 'package:hackernews_flutter/widgets/detail/text_and_icon_widget.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class DetailPage extends StatefulWidget {
   static const routeName = '/detail-hackernews';
@@ -23,7 +21,6 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   CommentBloc _commentBloc;
-  CommentRepository _commentRepository = CommentRepository();
 
   @override
   void initState() {

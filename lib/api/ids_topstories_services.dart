@@ -4,7 +4,6 @@
 
 import 'package:dio/dio.dart';
 import 'package:hackernews_flutter/api/base_api.dart';
-import 'package:hackernews_flutter/utils/endpoints.dart';
 
 class IdsServices {
 
@@ -13,7 +12,6 @@ class IdsServices {
       final Response resultFromJson = await BaseApi.getData(url: urlEndpoint);
       return Future.value(List.from(resultFromJson.data));
     } catch (e) {
-      print(e);
       throw Exception(e);
     }
   }

@@ -14,7 +14,6 @@ import 'package:hackernews_flutter/screen/home.dart';
 import 'package:hackernews_flutter/utils/logger_config.dart';
 import 'package:hackernews_flutter/utils/routes.dart';
 import 'package:hackernews_flutter/utils/values.dart';
-import 'package:intl/intl.dart';
 
 main() {
   LoggerConfig.instance();

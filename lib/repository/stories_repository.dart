@@ -1,9 +1,5 @@
-
-
-
 import 'package:hackernews_flutter/api/item_service.dart';
 import 'package:hackernews_flutter/model/story.dart';
-import 'package:hackernews_flutter/repository/base_repository.dart';
 
 class StoriesRepository {
   String url;

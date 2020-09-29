@@ -13,7 +13,7 @@ class Strings {
   static const String subtitle_use_browser_external = 'Instead of in-app one';
 
 
-  /**
+  /*
    * id	The item's unique id.
    * deleted	true if the item is deleted.
    * type	The type of item. One of "job", "story", "comment", "poll", or "pollopt".

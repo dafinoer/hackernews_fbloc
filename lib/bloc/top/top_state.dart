@@ -23,7 +23,7 @@ class TopError extends TopState {
 
 class TopLoaded extends TopState {
 
-  List<Story> listStory;
+  final List<Story> listStory;
 
   bool isMax;
 
@@ -40,6 +40,5 @@ class TopLoaded extends TopState {
   }
 
   @override
-  // TODO: implement props
   List<Object> get props => [listStory, isMax];
 }

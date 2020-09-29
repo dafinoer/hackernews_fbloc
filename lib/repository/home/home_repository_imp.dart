@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:hackernews_flutter/api/top_source.dart';
 import 'package:hackernews_flutter/common/remote/config/network_func.dart';
 import 'package:hackernews_flutter/common/remote/config/result.dart';
@@ -49,9 +48,8 @@ class TopRepositoryImp extends TopRepository {
         if (item.status == Status.succes) {
           return item.body;
         } else {
-          LoggerConfig.log.d(item.code ?? 'none');
-          // throw Exception(
-          //     'code : ${item?.code} --> ${item?.errorBody} --> dio : ${item?.dioError}');
+          throw Exception(
+              'code : ${item?.code} --> ${item?.errorBody} --> dio : ${item?.dioError}');
         }
       }).toList();
       return Future.wait(items);

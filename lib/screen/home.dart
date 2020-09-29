@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hackernews_flutter/bloc/navigator/navigator_bloc.dart';
-import 'package:hackernews_flutter/bloc/navigator/navigator_event.dart';
-import 'package:hackernews_flutter/bloc/navigator/navigator_state.dart';
 import 'package:hackernews_flutter/screen/jobs/job_page.dart';
 import 'package:hackernews_flutter/screen/new/new_page.dart';
 import 'package:hackernews_flutter/screen/settings/settings_page.dart';

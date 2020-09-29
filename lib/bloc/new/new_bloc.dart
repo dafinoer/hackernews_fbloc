@@ -1,6 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hackernews_flutter/api/core_source.dart';
 import 'package:hackernews_flutter/bloc/new/new_events.dart';
 import 'package:hackernews_flutter/bloc/new/new_state.dart';
+import 'package:hackernews_flutter/common/remote/config/dio_module.dart';
+import 'package:hackernews_flutter/repository/new_news/new_repository_impl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:hackernews_flutter/repository/new_repository.dart';
 import 'package:hackernews_flutter/utils/endpoints.dart';
@@ -13,6 +16,9 @@ class NewBloc extends Bloc<NewEvent, NewState> {
   final cacheIdNew = [];
 
   bool isReachedMax(NewState state) => state is NewLoaded && state.isMax;
+
+  NewRepositoryImpl _impl =
+      NewRepositoryImpl(BaseSource(DioModule.getInstance()));
 
   @override
   Stream<Transition<NewEvent, NewState>> transformEvents(
@@ -43,38 +49,28 @@ class NewBloc extends Bloc<NewEvent, NewState> {
   }
 
   Stream<NewState> loadingState(NewStoriesEvent event) async* {
-    final listId = await _newRepository.fetchIds(Endpoint.new_stories_ids);
+    final listId = await _impl.getIds();
     if (listId.isEmpty) yield NewLoaded(listStory: [], isMax: true);
-    cacheIdNew.addAll(listId);
 
-    final itemLimitStory =
-        cacheIdNew.getRange(event.start, event.limit).map((e) {
-      _newRepository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
-      return _newRepository.fetchStories();
-    }).toList();
-
-    final listStories = await Future.wait(itemLimitStory);
+    cacheIdNew.addAll(listId.take(50));
+    final itemResults = await _impl.getStories(listId.take(10).toList());
 
     yield NewLoaded(
-        listStory: listStories.where((element) => element != null).toList(),
+        listStory: itemResults,
         isMax: false);
   }
 
   Stream<NewState> newLoadMore(NewLoaded newLoadedState) async* {
     final lengthCurrentState = newLoadedState.listStory.length;
-    print(lengthCurrentState);
 
     try {
       if (cacheIdNew.length > lengthCurrentState) {
         final listOfId = recursiveId(0, [], newLoadedState);
-        final itemListNewStories = listOfId.map((e) {
-          _newRepository.setUrl(Endpoint.item.replaceAll('{id}', e.toString()));
-          return _newRepository.fetchStories();
-        }).toList();
-        final listOfItem = await Future.wait(itemListNewStories);
+        final items = await _impl.getStories(listOfId);
 
         yield NewLoaded(
-            listStory: newLoadedState.listStory + listOfItem.where((e) => e != null).toList(), isMax: false);
+            listStory: newLoadedState.listStory + items,
+            isMax: false);
       } else {
         yield newLoadedState.copyWith(isMaxList: true);
       }

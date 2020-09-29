@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hackernews_flutter/bloc/settings/settings_bloc.dart';
-import 'package:hackernews_flutter/bloc/settings/settings_event.dart';
 import 'package:hackernews_flutter/bloc/top/top_bloc.dart';
 import 'package:hackernews_flutter/bloc/top/top_event.dart';
 import 'package:hackernews_flutter/bloc/top/top_state.dart';
 import 'package:hackernews_flutter/model/story.dart';
 import 'package:hackernews_flutter/screen/detail/detail_page.dart';
+import 'package:hackernews_flutter/screen/top/list_widget.dart';
 import 'package:hackernews_flutter/utils/detail_arguments.dart';
 import 'package:hackernews_flutter/utils/function_helper.dart';
-import 'package:hackernews_flutter/utils/logger_config.dart';
 import 'package:hackernews_flutter/utils/strings.dart';
 import 'package:hackernews_flutter/utils/values.dart';
 
@@ -53,98 +52,7 @@ class _TopPage extends State<TopPage> {
             context.bloc<TopBloc>().add(RefreshPullRequest(0, 20));
             return await Future.delayed(Duration(milliseconds: 500));
           },
-          child: BlocConsumer<TopBloc, TopState>(
-            listener: (_, state) {
-              if (state is TopError) {
-                FuntionHelper.showSnackbar(context, 'uppps error');
-              }
-            },
-            builder: (_, state) {
-              if (state is TopLoading) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
-              if (state is TopLoaded) {
-                return ListView.separated(
-                    padding: EdgeInsets.only(top: space_4x),
-                    separatorBuilder: (_, index) => Divider(),
-                    controller: _scrollController,
-                    itemCount: state.isMax
-                        ? state.listStory.length
-                        : state.listStory.length + 1,
-                    itemBuilder: (_, index) {
-                      if (index >= state.listStory.length) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      return ListTile(
-                        title: Text(
-                          state.listStory[index].title,
-                          style: theme.textTheme.subtitle1,
-                        ),
-                        subtitle: context.bloc<SettingsBloc>().state.typeList ==
-                                TypeList.Normal
-                            ? Padding(
-                                padding: EdgeInsets.only(top: space_2x),
-                                child: Row(
-                                  children: <Widget>[
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.favorite_border,
-                                          size: space_4x,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: space_1x),
-                                          child: Text(
-                                            state.listStory[index].score
-                                                .toString(),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .subtitle2,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: space_3x),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          Icon(Icons.message, size: space_4x),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: space_1x),
-                                            child: Text(
-                                              state.listStory[index].descendants
-                                                  .toString(),
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .subtitle2,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            : null,
-                        onTap: () => _onTapAction(state.listStory[index]),
-                      );
-                    });
-              }
-            },
-          ),
-        ));
+          child: ListWidget(_scrollController)));
   }
 
   void _onTapAction(Story story) {

@@ -3,6 +3,7 @@ import 'package:hackernews_flutter/bloc/comment/comment_event.dart';
 import 'package:hackernews_flutter/bloc/comment/comment_state.dart';
 import 'package:hackernews_flutter/model/comment.dart';
 import 'package:hackernews_flutter/utils/function_helper.dart';
+import 'package:logger/logger.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:hackernews_flutter/repository/comment_repository.dart';
 import 'package:hackernews_flutter/utils/endpoints.dart';
@@ -11,6 +12,8 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
   CommentBloc(CommentState initialState) : super(initialState);
 
   CommentRepository _commentRepository = CommentRepository();
+
+  var log = Logger();
 
   @override
   Stream<Transition<CommentEvent, CommentState>> transformEvents(
@@ -21,6 +24,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
 
   @override
   Stream<CommentState> mapEventToState(CommentEvent event) async* {
+    final currentState = state;
     try {
       if (event is CommentListOfId) {
         if (state is CommentLoading) {
@@ -29,7 +33,8 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
           if (itemComment.length > 0) {
             var dataItem = List<Comment>();
             if (itemComment.length > 10) {
-              dataItem = await _commentRepository.quequeAsync(itemComment);
+              dataItem = await _commentRepository
+                  .quequeAsync(itemComment.take(10).toList());
             } else {
               dataItem = await _commentRepository.quequeAsync(itemComment);
             }
@@ -39,7 +44,18 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
           }
         }
       }
+
+      // if (event is CommentItem) {
+      //   if (currentState is CommentLoaded) {
+      //     final listUrl = FuntionHelper.convertToEndpoint(event.comment.kids);
+      //     final items = await _commentRepository.quequeAsync(listUrl);
+      //     final indexParent = currentState.listOfComment.indexOf(event.comment);
+
+      //     yield currentState.copywith();
+      //   }
+      // }
     } catch (e) {
+      print(e);
       yield CommentError(e.toString());
     }
   }

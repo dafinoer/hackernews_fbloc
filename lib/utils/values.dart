@@ -11,7 +11,7 @@ const Color primaryColor = Color(0XFF4A148C);
 const Color linkUrlColor = Color(0XFF64B5F6);
 
 
-Color parent_comment = Colors.purple[500];
-Color parent_second = Colors.red[100];
-Color parent_thirth = Colors.orange[300];
-Color parent_fourth = Colors.blue[200];
+Color parentComment = Colors.purple[500];
+Color parentSecond = Colors.red[100];
+Color parentThirth = Colors.orange[300];
+Color parentFourth = Colors.blue[200];
