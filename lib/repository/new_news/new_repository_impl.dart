@@ -35,6 +35,6 @@ class NewRepositoryImpl extends NewRepository {
   Future<List<Story>> getStories(List<int> ids) async {
       final items = ids.map((e) => _source.fetchItem(e.toString())).toList();
       final results = await Future.wait(items, eagerError: true);
-      return List<Story>.from(results.map((e) => e.body).toList());
+      return List<Story>.from(results.map((e) => Story.fromJson(e.body)).toList());
   }
 }

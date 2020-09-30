@@ -6,13 +6,10 @@ import 'package:hackernews_flutter/common/remote/config/dio_module.dart';
 import 'package:hackernews_flutter/repository/new_news/new_repository_impl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:hackernews_flutter/repository/new_repository.dart';
-import 'package:hackernews_flutter/utils/endpoints.dart';
 
 class NewBloc extends Bloc<NewEvent, NewState> {
   NewBloc(NewState initialState) : super(initialState);
-
-  final NewRepository _newRepository = NewRepository();
-
+  
   final cacheIdNew = [];
 
   bool isReachedMax(NewState state) => state is NewLoaded && state.isMax;

@@ -17,7 +17,7 @@ class JobRepositoryImpl extends JobRepository {
 
     switch (items.status) {
       case Status.succes:
-        final result = List.from(items.body.map((e) => e.toString()).toList());
+        final result = List<int>.from(items.body.map((e) => e).toList());
         return result;
         break;
       case Status.error:
@@ -33,9 +33,20 @@ class JobRepositoryImpl extends JobRepository {
   Future<List<Job>> getStories(List<int> params) async {
     final items = params.map((e) async {
       final items = await _source.fetchItem(e.toString());
-      return items.body;
+      switch (items.status) {
+        case Status.succes:
+          return items;
+          break;
+        case Status.error:
+          throw Exception(
+              'code : ${items?.code} --> ${items?.errorBody} --> dio : ${items?.dioError}');
+          break;
+        default:
+      }
     }).toList();
-    final result = await Future.wait(items);
-    return result;
+    final result = await Future.wait(items, eagerError: true);
+    final responseItems =
+        List<Job>.from(result.map((e) => Job.fromJson(e.body)).toList());
+    return responseItems;
   }
 }

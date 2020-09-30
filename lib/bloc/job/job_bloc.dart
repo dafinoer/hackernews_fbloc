@@ -1,20 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hackernews_flutter/api/ids_topstories_services.dart';
 import 'package:hackernews_flutter/bloc/job/job_event.dart';
 import 'package:hackernews_flutter/bloc/job/job_state.dart';
 import 'package:hackernews_flutter/common/remote/config/dio_module.dart';
 import 'package:hackernews_flutter/repository/jobs/job_repository_imp.dart';
-import 'package:hackernews_flutter/repository/jobs_repository.dart';
-import 'package:hackernews_flutter/utils/endpoints.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:hackernews_flutter/api/core_source.dart';
 
 class JobBloc extends Bloc<JobEvent, JobState> {
   JobBloc(JobState initialState) : super(initialState);
-
-  JobsRepository _repository = JobsRepository();
-
-  IdsServices _idsServices = IdsServices();
 
   JobRepositoryImpl repositoryImpl =
       JobRepositoryImpl(BaseSource(DioModule.getInstance()));
@@ -51,7 +44,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
 
     if (result.isNotEmpty) {
       cacheId.addAll(result.take(50).toList());
-      final limitId = cacheId.take(10).toList();
+      final limitId = result.take(10).toList();
       final dataIds = await repositoryImpl.getStories(limitId);
 
       yield JobLoaded(listOfJobs: dataIds, isMax: false);
@@ -67,7 +60,8 @@ class JobBloc extends Bloc<JobEvent, JobState> {
       final indexIds = recursiveId(0, [], jobLoadedState);
       final items = await repositoryImpl.getStories(indexIds);
 
-      yield JobLoaded(listOfJobs: jobLoadedState.listOfJobs + items, isMax: false);
+      yield JobLoaded(
+          listOfJobs: jobLoadedState.listOfJobs + items, isMax: false);
     } else {
       yield jobLoadedState.copyWith(isMax: true);
     }

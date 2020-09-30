@@ -36,7 +36,6 @@ class ListWidget extends StatelessWidget {
 
         if (state is TopLoaded) {
           return ListView.separated(
-              padding: EdgeInsets.only(top: space_4x),
               separatorBuilder: (_, index) => Divider(),
               controller: listController,
               itemCount: state.isMax
